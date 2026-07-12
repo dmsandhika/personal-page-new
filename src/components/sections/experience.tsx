@@ -21,7 +21,7 @@ export function Experience({ items }: { items: ExperienceItem[] }) {
       <div className="space-y-10">
         {items.map((item, i) => (
           <FadeIn key={item.id} delay={i * 0.05}>
-            <div className="border-l-2 pl-6">
+            <div className="border-l-2 border-primary/30 pl-6">
               <p className="text-xs text-muted-foreground">
                 {formatPeriod(item.start_date, item.end_date)}
               </p>

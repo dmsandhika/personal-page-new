@@ -38,7 +38,7 @@ export function Projects({ items }: { items: Project[] }) {
                         target="_blank"
                         rel="noopener noreferrer"
                         aria-label="Repository"
-                        className="text-muted-foreground hover:text-foreground"
+                        className="text-muted-foreground hover:text-primary"
                       >
                         <GithubIcon className="size-4" />
                       </a>
@@ -49,7 +49,7 @@ export function Projects({ items }: { items: Project[] }) {
                         target="_blank"
                         rel="noopener noreferrer"
                         aria-label="Live site"
-                        className="text-muted-foreground hover:text-foreground"
+                        className="text-muted-foreground hover:text-primary"
                       >
                         <ExternalLink className="size-4" />
                       </a>
@@ -64,7 +64,7 @@ export function Projects({ items }: { items: Project[] }) {
                 {project.tags.length > 0 && (
                   <div className="mt-4 flex flex-wrap gap-2">
                     {project.tags.map((tag) => (
-                      <Badge key={tag} variant="secondary">
+                      <Badge key={tag} variant="secondary" className="bg-primary/10 text-primary hover:bg-primary/15">
                         {tag}
                       </Badge>
                     ))}

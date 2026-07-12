@@ -36,7 +36,7 @@ export function Contact({ profile }: { profile: Profile }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={label}
-                className="text-muted-foreground hover:text-foreground"
+                className="text-muted-foreground hover:text-primary"
               >
                 <Icon className="size-5" />
               </a>

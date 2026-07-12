@@ -45,7 +45,7 @@ export function Hero({ profile }: { profile: Profile }) {
 
         <motion.a
           href="#about"
-          className="mt-4 inline-flex size-10 items-center justify-center rounded-full border text-muted-foreground hover:text-foreground"
+          className="mt-4 inline-flex size-10 items-center justify-center rounded-full border text-muted-foreground hover:border-primary hover:text-primary"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.6 }}

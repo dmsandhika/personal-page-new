@@ -1,5 +1,3 @@
--- Run this once in the Supabase SQL editor (Project > SQL Editor > New query).
-
 create table if not exists profile (
   id uuid primary key default gen_random_uuid(),
   name text not null default '',
@@ -49,11 +47,11 @@ alter table profile enable row level security;
 alter table projects enable row level security;
 alter table experience enable row level security;
 
--- Public (anon) read access — the site is a public personal page.
+-- Public (publishable key) read access — the site is a public personal page.
 create policy "Public can read profile" on profile for select using (true);
 create policy "Public can read projects" on projects for select using (true);
 create policy "Public can read experience" on experience for select using (true);
 
--- No insert/update/delete policies for anon: all writes go through the
--- server-side admin client (service role key), which bypasses RLS and is
--- gated by the admin password check in src/middleware.ts.
+-- No insert/update/delete policies for the publishable key: all writes go
+-- through the server-side admin client (secret key), which bypasses RLS and
+-- is gated by the admin password check in src/proxy.ts.

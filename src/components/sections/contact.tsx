@@ -22,7 +22,7 @@ export function Contact({ profile }: { profile: Profile }) {
           Terbuka untuk peluang kerja sama atau sekadar ngobrol.
         </p>
 
-        <Button size="lg" render={<a href={`mailto:${profile.email}`} />}>
+        <Button size="lg" nativeButton={false} render={<a href={`mailto:${profile.email}`} />}>
           <Mail className="size-4" />
           {profile.email}
         </Button>

@@ -4,9 +4,23 @@ Next.js personal page dengan panel admin untuk edit konten secara dinamis, data 
 
 ## Setup
 
-### 1. Buat project Supabase
+### 1. Link project Supabase & apply migration
 
-Buat project baru di [supabase.com](https://supabase.com), lalu buka **SQL Editor** dan jalankan isi file [`supabase/schema.sql`](supabase/schema.sql). Ini akan membuat tabel `profile`, `projects`, `experience`, RLS policy read-only untuk publik, dan seed satu baris profile kosong.
+Schema database ada di [`supabase/migrations/`](supabase/migrations/) dan dikelola lewat Supabase CLI (`npx supabase`, sudah ter-init di `supabase/config.toml`).
+
+```bash
+# Login ke akun Supabase kamu (buka browser untuk auth)
+npx supabase login
+
+# Link ke project yang sudah dibuat di supabase.com — project ref ada di URL
+# dashboard project kamu: https://supabase.com/dashboard/project/<project-ref>
+npx supabase link --project-ref <project-ref>
+
+# Apply migration (bikin tabel profile, projects, experience + RLS policy)
+npx supabase db push
+```
+
+Setiap kali schema berubah, tambah file baru di `supabase/migrations/` (mis. lewat `npx supabase migration new <nama>`) lalu `npx supabase db push` lagi.
 
 ### 2. Isi environment variables
 
@@ -16,10 +30,11 @@ Copy `.env.local.example` menjadi `.env.local`:
 cp .env.local.example .env.local
 ```
 
-Isi nilainya:
+Isi nilainya (dari Supabase Project Settings > API Keys):
 
-- `NEXT_PUBLIC_SUPABASE_URL` & `NEXT_PUBLIC_SUPABASE_ANON_KEY` — dari Supabase Project Settings > API.
-- `SUPABASE_SERVICE_ROLE_KEY` — dari halaman yang sama (jangan pernah expose ke client/browser).
+- `NEXT_PUBLIC_SUPABASE_URL` — URL project.
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` — publishable key, aman dipakai di client/browser.
+- `SUPABASE_SECRET_KEY` — secret key, **jangan pernah** expose ke client/browser, hanya dipakai di Server Action.
 - `ADMIN_PASSWORD` — password untuk masuk ke `/admin`.
 - `ADMIN_SESSION_SECRET` — string acak panjang untuk menandatangani session admin, generate dengan:
   ```bash
@@ -39,9 +54,9 @@ Setelah login, isi data di menu **Profile**, **Experience**, dan **Projects** �
 
 ## Struktur
 
-- `src/app/page.tsx` — halaman publik (Hero, About, Experience, Projects, Contact), fetch data lewat `supabasePublic` (anon key, read-only).
-- `src/app/admin/**` — panel admin, dilindungi `src/middleware.ts` (cek cookie session admin). Semua perubahan data lewat Server Action yang memakai `supabaseAdmin` (service role key, hanya jalan di server).
-- `supabase/schema.sql` — DDL + RLS policy, dijalankan manual sekali di Supabase SQL Editor.
+- `src/app/page.tsx` — halaman publik (Hero, About, Experience, Projects, Contact), fetch data lewat `supabasePublic` (publishable key, read-only).
+- `src/app/admin/**` — panel admin, dilindungi `src/proxy.ts` (cek cookie session admin). Semua perubahan data lewat Server Action yang memakai `supabaseAdmin` (secret key, hanya jalan di server).
+- `supabase/migrations/` — schema database, di-apply lewat `npx supabase db push`.
 
 ## Deploy
 

@@ -40,7 +40,7 @@ export function Projects({ items }: { items: Project[] }) {
                 )}
                 <CardHeader className="pt-6">
                   <div className="flex items-center justify-between gap-4">
-                    <CardTitle>{title}</CardTitle>
+                    <CardTitle className="min-w-0 wrap-break-word">{title}</CardTitle>
                     <div className="flex shrink-0 gap-3">
                       {project.repo_url && (
                         <a

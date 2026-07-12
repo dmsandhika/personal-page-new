@@ -18,8 +18,8 @@ export default function AdminLayout({
   return (
     <div className="min-h-screen bg-muted/30">
       <header className="border-b bg-background">
-        <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-3">
-          <nav className="flex gap-4 text-sm font-medium">
+        <div className="mx-auto flex max-w-4xl flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+          <nav className="flex flex-wrap gap-x-4 gap-y-1 text-sm font-medium">
             {NAV_ITEMS.map((item) => (
               <Link
                 key={item.href}

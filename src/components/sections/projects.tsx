@@ -1,8 +1,9 @@
-import { ExternalLink, Github } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import type { Project } from "@/lib/types";
 import { FadeIn } from "@/components/motion/fade-in";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { GithubIcon } from "@/components/icons/social-icons";
 
 export function Projects({ items }: { items: Project[] }) {
   if (items.length === 0) return null;
@@ -39,7 +40,7 @@ export function Projects({ items }: { items: Project[] }) {
                         aria-label="Repository"
                         className="text-muted-foreground hover:text-foreground"
                       >
-                        <Github className="size-4" />
+                        <GithubIcon className="size-4" />
                       </a>
                     )}
                     {project.project_url && (

@@ -1,13 +1,14 @@
-import { Github, Linkedin, Mail, Twitter, Globe } from "lucide-react";
+import { Mail, Globe } from "lucide-react";
 import type { Profile } from "@/lib/types";
 import { FadeIn } from "@/components/motion/fade-in";
 import { Button } from "@/components/ui/button";
+import { GithubIcon, LinkedinIcon, TwitterIcon } from "@/components/icons/social-icons";
 
 export function Contact({ profile }: { profile: Profile }) {
   const links = [
-    { href: profile.github_url, label: "GitHub", icon: Github },
-    { href: profile.linkedin_url, label: "LinkedIn", icon: Linkedin },
-    { href: profile.twitter_url, label: "Twitter", icon: Twitter },
+    { href: profile.github_url, label: "GitHub", icon: GithubIcon },
+    { href: profile.linkedin_url, label: "LinkedIn", icon: LinkedinIcon },
+    { href: profile.twitter_url, label: "Twitter", icon: TwitterIcon },
     { href: profile.website_url, label: "Website", icon: Globe },
   ].filter((link) => link.href);
 
@@ -21,11 +22,9 @@ export function Contact({ profile }: { profile: Profile }) {
           Terbuka untuk peluang kerja sama atau sekadar ngobrol.
         </p>
 
-        <Button asChild size="lg">
-          <a href={`mailto:${profile.email}`}>
-            <Mail className="size-4" />
-            {profile.email}
-          </a>
+        <Button size="lg" render={<a href={`mailto:${profile.email}`} />}>
+          <Mail className="size-4" />
+          {profile.email}
         </Button>
 
         {links.length > 0 && (

@@ -37,25 +37,3 @@ export type Experience = {
   sort_order: number;
   created_at: string;
 };
-
-export type Database = {
-  public: {
-    Tables: {
-      profile: {
-        Row: Profile;
-        Insert: Partial<Profile>;
-        Update: Partial<Profile>;
-      };
-      projects: {
-        Row: Project;
-        Insert: Partial<Project>;
-        Update: Partial<Project>;
-      };
-      experience: {
-        Row: Experience;
-        Insert: Partial<Experience>;
-        Update: Partial<Experience>;
-      };
-    };
-  };
-};

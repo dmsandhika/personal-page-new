@@ -1,10 +1,14 @@
+"use client";
+
 import { Mail, Globe } from "lucide-react";
 import type { Profile } from "@/lib/types";
 import { FadeIn } from "@/components/motion/fade-in";
 import { Button } from "@/components/ui/button";
 import { GithubIcon, LinkedinIcon, TwitterIcon } from "@/components/icons/social-icons";
+import { useLocale } from "@/lib/i18n/locale-context";
 
 export function Contact({ profile }: { profile: Profile }) {
+  const { t } = useLocale();
   const links = [
     { href: profile.github_url, label: "GitHub", icon: GithubIcon },
     { href: profile.linkedin_url, label: "LinkedIn", icon: LinkedinIcon },
@@ -16,11 +20,9 @@ export function Contact({ profile }: { profile: Profile }) {
     <section id="contact" className="mx-auto max-w-2xl px-6 py-24 text-center">
       <FadeIn>
         <h2 className="mb-4 text-sm font-semibold tracking-widest text-muted-foreground uppercase">
-          Contact
+          {t("section.contact")}
         </h2>
-        <p className="mb-8 text-lg text-muted-foreground">
-          Terbuka untuk peluang kerja sama atau sekadar ngobrol.
-        </p>
+        <p className="mb-8 text-lg text-muted-foreground">{t("contact.subtitle")}</p>
 
         <Button size="lg" nativeButton={false} render={<a href={`mailto:${profile.email}`} />}>
           <Mail className="size-4" />

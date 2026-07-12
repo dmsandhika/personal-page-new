@@ -3,8 +3,13 @@
 import { motion } from "framer-motion";
 import { ArrowDown } from "lucide-react";
 import type { Profile } from "@/lib/types";
+import { useLocale } from "@/lib/i18n/locale-context";
+import { pickLocalized } from "@/lib/i18n/dictionaries";
 
 export function Hero({ profile }: { profile: Profile }) {
+  const { locale, t } = useLocale();
+  const title = pickLocalized(locale, profile.title, profile.title_en);
+
   return (
     <section className="flex min-h-[90vh] flex-col items-center justify-center px-6 text-center">
       <motion.div
@@ -39,7 +44,7 @@ export function Hero({ profile }: { profile: Profile }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
-            {profile.title}
+            {title}
           </motion.p>
         </div>
 
@@ -49,7 +54,7 @@ export function Hero({ profile }: { profile: Profile }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.6 }}
-          aria-label="Scroll ke bawah"
+          aria-label={t("hero.scrollAria")}
         >
           <ArrowDown className="size-4" />
         </motion.a>

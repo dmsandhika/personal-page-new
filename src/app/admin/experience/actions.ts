@@ -6,11 +6,13 @@ import { supabaseAdmin } from "@/lib/supabase/admin";
 function experienceFromForm(formData: FormData) {
   return {
     role: String(formData.get("role") ?? ""),
+    role_en: String(formData.get("role_en") ?? "") || null,
     company: String(formData.get("company") ?? ""),
     location: String(formData.get("location") ?? "") || null,
     start_date: String(formData.get("start_date") ?? ""),
     end_date: String(formData.get("end_date") ?? "") || null,
     description: String(formData.get("description") ?? "") || null,
+    description_en: String(formData.get("description_en") ?? "") || null,
     sort_order: Number(formData.get("sort_order") ?? 0),
   };
 }

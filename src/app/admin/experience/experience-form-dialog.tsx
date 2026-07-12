@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
@@ -51,16 +52,39 @@ export function ExperienceFormDialog({
         <form action={handleSubmit} className="space-y-4">
           {isEdit && <input type="hidden" name="id" value={experience!.id} />}
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-1.5">
-              <Label htmlFor="role">Role / Jabatan</Label>
-              <Input id="role" name="role" defaultValue={experience?.role} required />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="company">Perusahaan</Label>
-              <Input id="company" name="company" defaultValue={experience?.company} required />
-            </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="company">Perusahaan</Label>
+            <Input id="company" name="company" defaultValue={experience?.company} required />
           </div>
+
+          <Tabs defaultValue="id">
+            <TabsList>
+              <TabsTrigger value="id">Indonesia</TabsTrigger>
+              <TabsTrigger value="en">English</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="id" className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="role">Role / Jabatan</Label>
+                <Input id="role" name="role" defaultValue={experience?.role} required />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="description">Deskripsi</Label>
+                <Textarea id="description" name="description" rows={4} defaultValue={experience?.description ?? ""} />
+              </div>
+            </TabsContent>
+
+            <TabsContent value="en" className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="role_en">Role (English)</Label>
+                <Input id="role_en" name="role_en" defaultValue={experience?.role_en ?? ""} />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="description_en">Description (English)</Label>
+                <Textarea id="description_en" name="description_en" rows={4} defaultValue={experience?.description_en ?? ""} />
+              </div>
+            </TabsContent>
+          </Tabs>
 
           <div className="space-y-1.5">
             <Label htmlFor="location">Lokasi</Label>
@@ -82,11 +106,6 @@ export function ExperienceFormDialog({
               <Label htmlFor="end_date">Selesai (kosongkan jika masih berjalan)</Label>
               <Input id="end_date" name="end_date" type="date" defaultValue={experience?.end_date ?? ""} />
             </div>
-          </div>
-
-          <div className="space-y-1.5">
-            <Label htmlFor="description">Deskripsi</Label>
-            <Textarea id="description" name="description" rows={4} defaultValue={experience?.description ?? ""} />
           </div>
 
           <div className="space-y-1.5">

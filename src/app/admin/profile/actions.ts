@@ -11,7 +11,9 @@ export async function updateProfile(formData: FormData) {
     .update({
       name: String(formData.get("name") ?? ""),
       title: String(formData.get("title") ?? ""),
+      title_en: String(formData.get("title_en") ?? "") || null,
       bio: String(formData.get("bio") ?? ""),
+      bio_en: String(formData.get("bio_en") ?? "") || null,
       email: String(formData.get("email") ?? ""),
       location: String(formData.get("location") ?? "") || null,
       avatar_url: String(formData.get("avatar_url") ?? "") || null,

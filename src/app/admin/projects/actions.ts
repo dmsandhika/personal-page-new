@@ -7,7 +7,9 @@ function projectFromForm(formData: FormData) {
   const tagsRaw = String(formData.get("tags") ?? "");
   return {
     title: String(formData.get("title") ?? ""),
+    title_en: String(formData.get("title_en") ?? "") || null,
     description: String(formData.get("description") ?? ""),
+    description_en: String(formData.get("description_en") ?? "") || null,
     image_url: String(formData.get("image_url") ?? "") || null,
     tags: tagsRaw
       .split(",")

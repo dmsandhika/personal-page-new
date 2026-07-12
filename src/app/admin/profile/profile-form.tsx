@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Card,
   CardContent,
@@ -38,21 +39,39 @@ export function ProfileForm({ profile }: { profile: Profile }) {
           <CardTitle>Hero &amp; About</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-1.5">
-              <Label htmlFor="name">Nama</Label>
-              <Input id="name" name="name" defaultValue={profile.name} required />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="title">Jabatan / Tagline</Label>
-              <Input id="title" name="title" defaultValue={profile.title} required />
-            </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="name">Nama</Label>
+            <Input id="name" name="name" defaultValue={profile.name} required />
           </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="bio">Bio</Label>
-            <Textarea id="bio" name="bio" rows={5} defaultValue={profile.bio} />
-          </div>
+          <Tabs defaultValue="id">
+            <TabsList>
+              <TabsTrigger value="id">Indonesia</TabsTrigger>
+              <TabsTrigger value="en">English</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="id" className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="title">Jabatan / Tagline</Label>
+                <Input id="title" name="title" defaultValue={profile.title} required />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="bio">Bio</Label>
+                <Textarea id="bio" name="bio" rows={5} defaultValue={profile.bio} />
+              </div>
+            </TabsContent>
+
+            <TabsContent value="en" className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="title_en">Title / Tagline (English)</Label>
+                <Input id="title_en" name="title_en" defaultValue={profile.title_en ?? ""} />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="bio_en">Bio (English)</Label>
+                <Textarea id="bio_en" name="bio_en" rows={5} defaultValue={profile.bio_en ?? ""} />
+              </div>
+            </TabsContent>
+          </Tabs>
 
           <div className="space-y-1.5">
             <Label htmlFor="avatar_url">URL Foto Profil</Label>

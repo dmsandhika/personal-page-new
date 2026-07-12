@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
@@ -52,15 +53,34 @@ export function ProjectFormDialog({
         <form action={handleSubmit} className="space-y-4">
           {isEdit && <input type="hidden" name="id" value={project!.id} />}
 
-          <div className="space-y-1.5">
-            <Label htmlFor="title">Judul</Label>
-            <Input id="title" name="title" defaultValue={project?.title} required />
-          </div>
+          <Tabs defaultValue="id">
+            <TabsList>
+              <TabsTrigger value="id">Indonesia</TabsTrigger>
+              <TabsTrigger value="en">English</TabsTrigger>
+            </TabsList>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="description">Deskripsi</Label>
-            <Textarea id="description" name="description" rows={4} defaultValue={project?.description} />
-          </div>
+            <TabsContent value="id" className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="title">Judul</Label>
+                <Input id="title" name="title" defaultValue={project?.title} required />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="description">Deskripsi</Label>
+                <Textarea id="description" name="description" rows={4} defaultValue={project?.description} />
+              </div>
+            </TabsContent>
+
+            <TabsContent value="en" className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="title_en">Title (English)</Label>
+                <Input id="title_en" name="title_en" defaultValue={project?.title_en ?? ""} />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="description_en">Description (English)</Label>
+                <Textarea id="description_en" name="description_en" rows={4} defaultValue={project?.description_en ?? ""} />
+              </div>
+            </TabsContent>
+          </Tabs>
 
           <div className="space-y-1.5">
             <Label htmlFor="image_url">URL Gambar</Label>

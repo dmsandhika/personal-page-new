@@ -4,6 +4,7 @@ import { About } from "@/components/sections/about";
 import { Experience } from "@/components/sections/experience";
 import { Projects } from "@/components/sections/projects";
 import { Contact } from "@/components/sections/contact";
+import { PageControls } from "@/components/page-controls";
 
 export const revalidate = 0;
 
@@ -24,7 +25,7 @@ export default async function Home() {
   if (!profile) {
     return (
       <main className="flex min-h-screen items-center justify-center px-6 text-center text-muted-foreground">
-        Belum ada data. Jalankan <code className="mx-1">supabase/schema.sql</code>
+        Belum ada data. Jalankan migration di <code className="mx-1">supabase/migrations/</code>
         lalu isi lewat halaman /admin.
       </main>
     );
@@ -32,6 +33,7 @@ export default async function Home() {
 
   return (
     <main>
+      <PageControls />
       <Hero profile={profile} />
       <About profile={profile} />
       <Experience items={experience ?? []} />

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { logout } from "./login/actions";
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const NAV_ITEMS = [
   { href: "/admin/profile", label: "Profile" },
@@ -37,6 +38,7 @@ export default function AdminLayout({
             >
               Lihat situs
             </Link>
+            <ThemeToggle />
             <form action={logout}>
               <Button type="submit" variant="outline" size="sm">
                 Logout

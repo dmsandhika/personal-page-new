@@ -2,7 +2,9 @@ export type Profile = {
   id: string;
   name: string;
   title: string;
+  title_en: string | null;
   bio: string;
+  bio_en: string | null;
   avatar_url: string | null;
   email: string;
   location: string | null;
@@ -16,7 +18,9 @@ export type Profile = {
 export type Project = {
   id: string;
   title: string;
+  title_en: string | null;
   description: string;
+  description_en: string | null;
   image_url: string | null;
   tags: string[];
   project_url: string | null;
@@ -29,11 +33,13 @@ export type Project = {
 export type Experience = {
   id: string;
   role: string;
+  role_en: string | null;
   company: string;
   location: string | null;
   start_date: string;
   end_date: string | null;
   description: string | null;
+  description_en: string | null;
   sort_order: number;
   created_at: string;
 };

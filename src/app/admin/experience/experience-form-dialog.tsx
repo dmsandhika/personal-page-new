@@ -63,7 +63,7 @@ export function ExperienceFormDialog({
               <TabsTrigger value="en">English</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="id" className="space-y-4">
+            <TabsContent value="id" keepMounted className="space-y-4">
               <div className="space-y-1.5">
                 <Label htmlFor="role">Role / Jabatan</Label>
                 <Input id="role" name="role" defaultValue={experience?.role} required />
@@ -74,7 +74,7 @@ export function ExperienceFormDialog({
               </div>
             </TabsContent>
 
-            <TabsContent value="en" className="space-y-4">
+            <TabsContent value="en" keepMounted className="space-y-4">
               <div className="space-y-1.5">
                 <Label htmlFor="role_en">Role (English)</Label>
                 <Input id="role_en" name="role_en" defaultValue={experience?.role_en ?? ""} />

@@ -50,7 +50,7 @@ export function ProfileForm({ profile }: { profile: Profile }) {
               <TabsTrigger value="en">English</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="id" className="space-y-4">
+            <TabsContent value="id" keepMounted className="space-y-4">
               <div className="space-y-1.5">
                 <Label htmlFor="title">Jabatan / Tagline</Label>
                 <Input id="title" name="title" defaultValue={profile.title} required />
@@ -61,7 +61,7 @@ export function ProfileForm({ profile }: { profile: Profile }) {
               </div>
             </TabsContent>
 
-            <TabsContent value="en" className="space-y-4">
+            <TabsContent value="en" keepMounted className="space-y-4">
               <div className="space-y-1.5">
                 <Label htmlFor="title_en">Title / Tagline (English)</Label>
                 <Input id="title_en" name="title_en" defaultValue={profile.title_en ?? ""} />

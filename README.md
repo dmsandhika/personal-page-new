@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Personal Page
 
-## Getting Started
+Next.js personal page dengan panel admin untuk edit konten secara dinamis, data disimpan di Supabase.
 
-First, run the development server:
+## Setup
+
+### 1. Buat project Supabase
+
+Buat project baru di [supabase.com](https://supabase.com), lalu buka **SQL Editor** dan jalankan isi file [`supabase/schema.sql`](supabase/schema.sql). Ini akan membuat tabel `profile`, `projects`, `experience`, RLS policy read-only untuk publik, dan seed satu baris profile kosong.
+
+### 2. Isi environment variables
+
+Copy `.env.local.example` menjadi `.env.local`:
+
+```bash
+cp .env.local.example .env.local
+```
+
+Isi nilainya:
+
+- `NEXT_PUBLIC_SUPABASE_URL` & `NEXT_PUBLIC_SUPABASE_ANON_KEY` — dari Supabase Project Settings > API.
+- `SUPABASE_SERVICE_ROLE_KEY` — dari halaman yang sama (jangan pernah expose ke client/browser).
+- `ADMIN_PASSWORD` — password untuk masuk ke `/admin`.
+- `ADMIN_SESSION_SECRET` — string acak panjang untuk menandatangani session admin, generate dengan:
+  ```bash
+  openssl rand -hex 32
+  ```
+
+### 3. Jalankan development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Halaman publik: [http://localhost:3000](http://localhost:3000)
+- Panel admin: [http://localhost:3000/admin](http://localhost:3000/admin) (login pakai `ADMIN_PASSWORD`)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Setelah login, isi data di menu **Profile**, **Experience**, dan **Projects** — perubahan langsung tampil di halaman publik.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Struktur
 
-## Learn More
+- `src/app/page.tsx` — halaman publik (Hero, About, Experience, Projects, Contact), fetch data lewat `supabasePublic` (anon key, read-only).
+- `src/app/admin/**` — panel admin, dilindungi `src/middleware.ts` (cek cookie session admin). Semua perubahan data lewat Server Action yang memakai `supabaseAdmin` (service role key, hanya jalan di server).
+- `supabase/schema.sql` — DDL + RLS policy, dijalankan manual sekali di Supabase SQL Editor.
 
-To learn more about Next.js, take a look at the following resources:
+## Deploy
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Deploy seperti project Next.js biasa (mis. [Vercel](https://vercel.com/new)) — pastikan environment variables di atas diisi juga di dashboard hosting.

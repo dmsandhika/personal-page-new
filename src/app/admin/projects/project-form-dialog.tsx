@@ -64,6 +64,12 @@ export function ProjectFormDialog({
         return;
       }
 
+      // Sync local state to what was just saved so re-editing this project
+      // (e.g. changing only the title) doesn't submit a stale image URL.
+      setImageUrl(finalUrl);
+      setImagePreview(finalUrl);
+      if (imageFileRef.current) imageFileRef.current.value = "";
+
       if (previousUrl && previousUrl !== finalUrl) {
         deleteImage(previousUrl);
       }

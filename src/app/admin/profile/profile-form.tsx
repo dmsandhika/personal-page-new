@@ -22,6 +22,9 @@ export function ProfileForm({ profile }: { profile: Profile }) {
   const [avatarPreview, setAvatarPreview] = useState(profile.avatar_url ?? "");
   const [avatarUrl, setAvatarUrl] = useState(profile.avatar_url ?? "");
   const avatarFileRef = useRef<HTMLInputElement>(null);
+  const [backPreview, setBackPreview] = useState(profile.card_back_url ?? "");
+  const [backUrl, setBackUrl] = useState(profile.card_back_url ?? "");
+  const backFileRef = useRef<HTMLInputElement>(null);
 
   function handleRemoveAvatar() {
     setAvatarPreview("");
@@ -29,23 +32,43 @@ export function ProfileForm({ profile }: { profile: Profile }) {
     if (avatarFileRef.current) avatarFileRef.current.value = "";
   }
 
+  function handleRemoveBack() {
+    setBackPreview("");
+    setBackUrl("");
+    if (backFileRef.current) backFileRef.current.value = "";
+  }
+
+  // Upload a pending file (if any) for one image field, returning the URL to
+  // persist. Returns undefined on upload error (caller should abort).
+  async function resolveImageUrl(
+    fileInput: FormDataEntryValue | null,
+    currentUrl: string
+  ): Promise<string | undefined> {
+    if (fileInput instanceof File && fileInput.size > 0) {
+      const uploadForm = new FormData();
+      uploadForm.set("file", fileInput);
+      const result = await uploadImage(uploadForm);
+      if (result.error) {
+        toast.error(result.error);
+        return undefined;
+      }
+      return result.url!;
+    }
+    return currentUrl;
+  }
+
   function handleSubmit(formData: FormData) {
     startTransition(async () => {
-      const previousUrl = profile.avatar_url ?? "";
-      let finalUrl = avatarUrl;
+      const prevAvatar = profile.avatar_url ?? "";
+      const prevBack = profile.card_back_url ?? "";
 
-      const file = formData.get("avatar_file");
-      if (file instanceof File && file.size > 0) {
-        const uploadForm = new FormData();
-        uploadForm.set("file", file);
-        const uploadResult = await uploadImage(uploadForm);
-        if (uploadResult.error) {
-          toast.error(uploadResult.error);
-          return;
-        }
-        finalUrl = uploadResult.url!;
-      }
-      formData.set("avatar_url", finalUrl);
+      const finalAvatar = await resolveImageUrl(formData.get("avatar_file"), avatarUrl);
+      if (finalAvatar === undefined) return;
+      const finalBack = await resolveImageUrl(formData.get("card_back_file"), backUrl);
+      if (finalBack === undefined) return;
+
+      formData.set("avatar_url", finalAvatar);
+      formData.set("card_back_url", finalBack);
 
       const result = await updateProfile(formData);
       if (result?.error) {
@@ -53,9 +76,17 @@ export function ProfileForm({ profile }: { profile: Profile }) {
         return;
       }
 
-      if (previousUrl && previousUrl !== finalUrl) {
-        deleteImage(previousUrl);
-      }
+      // Sync local state to what was just saved so a subsequent edit (e.g.
+      // changing only the name) doesn't submit a stale/empty image URL.
+      setAvatarUrl(finalAvatar);
+      setAvatarPreview(finalAvatar);
+      if (avatarFileRef.current) avatarFileRef.current.value = "";
+      setBackUrl(finalBack);
+      setBackPreview(finalBack);
+      if (backFileRef.current) backFileRef.current.value = "";
+
+      if (prevAvatar && prevAvatar !== finalAvatar) deleteImage(prevAvatar);
+      if (prevBack && prevBack !== finalBack) deleteImage(prevBack);
       toast.success("Profile berhasil disimpan");
     });
   }
@@ -128,6 +159,38 @@ export function ProfileForm({ profile }: { profile: Profile }) {
               onChange={(e) => {
                 const file = e.target.files?.[0];
                 if (file) setAvatarPreview(URL.createObjectURL(file));
+              }}
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="card_back_file">Foto Belakang Kartu Lanyard</Label>
+            <p className="text-sm text-muted-foreground">
+              Gambar di sisi belakang kartu 3D. Kosongkan untuk memakai warna kartu polos.
+            </p>
+            {backPreview && (
+              <div className="flex items-center gap-3">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={backPreview}
+                  alt="Preview foto belakang kartu"
+                  className="h-20 w-20 rounded-lg object-cover"
+                />
+                <Button type="button" variant="outline" size="sm" onClick={handleRemoveBack}>
+                  Hapus Foto
+                </Button>
+              </div>
+            )}
+            <input type="hidden" name="card_back_url" value={backUrl} readOnly />
+            <Input
+              ref={backFileRef}
+              id="card_back_file"
+              name="card_back_file"
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) setBackPreview(URL.createObjectURL(file));
               }}
             />
           </div>

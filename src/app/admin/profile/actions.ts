@@ -17,6 +17,7 @@ export async function updateProfile(formData: FormData) {
       email: String(formData.get("email") ?? ""),
       location: String(formData.get("location") ?? "") || null,
       avatar_url: String(formData.get("avatar_url") ?? "") || null,
+      card_back_url: String(formData.get("card_back_url") ?? "") || null,
       github_url: String(formData.get("github_url") ?? "") || null,
       linkedin_url: String(formData.get("linkedin_url") ?? "") || null,
       twitter_url: String(formData.get("twitter_url") ?? "") || null,

@@ -6,6 +6,7 @@ export type Profile = {
   bio: string;
   bio_en: string | null;
   avatar_url: string | null;
+  card_back_url: string | null;
   email: string;
   location: string | null;
   github_url: string | null;

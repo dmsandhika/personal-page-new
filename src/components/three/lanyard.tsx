@@ -398,5 +398,3 @@ function Band({
     </>
   );
 }
-
-useGLTF.preload(CARD_GLB_URL);

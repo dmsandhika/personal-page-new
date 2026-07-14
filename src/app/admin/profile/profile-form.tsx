@@ -1,8 +1,9 @@
 "use client";
 
-import { useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { updateProfile } from "./actions";
+import { deleteImage, uploadImage } from "../upload-action";
 import type { Profile } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,15 +19,44 @@ import {
 
 export function ProfileForm({ profile }: { profile: Profile }) {
   const [isPending, startTransition] = useTransition();
+  const [avatarPreview, setAvatarPreview] = useState(profile.avatar_url ?? "");
+  const [avatarUrl, setAvatarUrl] = useState(profile.avatar_url ?? "");
+  const avatarFileRef = useRef<HTMLInputElement>(null);
+
+  function handleRemoveAvatar() {
+    setAvatarPreview("");
+    setAvatarUrl("");
+    if (avatarFileRef.current) avatarFileRef.current.value = "";
+  }
 
   function handleSubmit(formData: FormData) {
     startTransition(async () => {
+      const previousUrl = profile.avatar_url ?? "";
+      let finalUrl = avatarUrl;
+
+      const file = formData.get("avatar_file");
+      if (file instanceof File && file.size > 0) {
+        const uploadForm = new FormData();
+        uploadForm.set("file", file);
+        const uploadResult = await uploadImage(uploadForm);
+        if (uploadResult.error) {
+          toast.error(uploadResult.error);
+          return;
+        }
+        finalUrl = uploadResult.url!;
+      }
+      formData.set("avatar_url", finalUrl);
+
       const result = await updateProfile(formData);
       if (result?.error) {
         toast.error(result.error);
-      } else {
-        toast.success("Profile berhasil disimpan");
+        return;
       }
+
+      if (previousUrl && previousUrl !== finalUrl) {
+        deleteImage(previousUrl);
+      }
+      toast.success("Profile berhasil disimpan");
     });
   }
 
@@ -74,12 +104,31 @@ export function ProfileForm({ profile }: { profile: Profile }) {
           </Tabs>
 
           <div className="space-y-1.5">
-            <Label htmlFor="avatar_url">URL Foto Profil</Label>
+            <Label htmlFor="avatar_file">Foto Profil</Label>
+            {avatarPreview && (
+              <div className="flex items-center gap-3">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={avatarPreview}
+                  alt="Preview foto profil"
+                  className="h-20 w-20 rounded-full object-cover"
+                />
+                <Button type="button" variant="outline" size="sm" onClick={handleRemoveAvatar}>
+                  Hapus Foto
+                </Button>
+              </div>
+            )}
+            <input type="hidden" name="avatar_url" value={avatarUrl} readOnly />
             <Input
-              id="avatar_url"
-              name="avatar_url"
-              defaultValue={profile.avatar_url ?? ""}
-              placeholder="https://..."
+              ref={avatarFileRef}
+              id="avatar_file"
+              name="avatar_file"
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) setAvatarPreview(URL.createObjectURL(file));
+              }}
             />
           </div>
         </CardContent>

@@ -15,13 +15,14 @@ export function Hero({ profile }: { profile: Profile }) {
   const bandColor = resolvedTheme === "dark" ? "#ffffff" : "#111111";
 
   return (
-    <section className="flex min-h-[90vh] flex-col items-center justify-center gap-8 px-6 py-16 lg:flex-row lg:justify-center lg:gap-4">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className="flex flex-col items-center gap-6 text-center lg:items-start lg:text-left"
-      >
+    <section className="flex min-h-[90vh] flex-col items-center justify-start px-6 pb-12 lg:justify-center lg:py-16">
+      <div className="relative flex w-full flex-col items-center gap-6 lg:max-w-6xl lg:min-h-140 lg:flex-row lg:justify-center lg:gap-8 lg:overflow-hidden lg:rounded-3xl lg:border lg:border-border lg:bg-muted/20 lg:p-10 lg:shadow-[inset_0_2px_28px_rgba(0,0,0,0.18)] dark:lg:shadow-[inset_0_2px_28px_rgba(0,0,0,0.55)]">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="order-last flex flex-col items-center gap-6 text-center lg:pointer-events-none lg:relative lg:z-10 lg:order-0 lg:flex-1 lg:items-start lg:text-left"
+        >
         <div className="space-y-3">
           <motion.h1
             className="text-4xl font-bold tracking-tight sm:text-6xl"
@@ -43,7 +44,7 @@ export function Hero({ profile }: { profile: Profile }) {
 
         <motion.a
           href="#about"
-          className="mt-4 inline-flex size-10 items-center justify-center rounded-full border text-muted-foreground hover:border-primary hover:text-primary"
+          className="pointer-events-auto mt-4 inline-flex size-10 items-center justify-center rounded-full border text-muted-foreground hover:border-primary hover:text-primary"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.6 }}
@@ -54,7 +55,7 @@ export function Hero({ profile }: { profile: Profile }) {
       </motion.div>
 
       <motion.div
-        className="h-95 w-full max-w-xl sm:h-115 lg:h-140 lg:max-w-2xl lg:flex-1"
+        className="h-95 w-full max-w-xl sm:h-115 lg:absolute lg:inset-0 lg:z-0 lg:h-auto lg:max-w-none"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6, delay: 0.2 }}
@@ -66,8 +67,10 @@ export function Hero({ profile }: { profile: Profile }) {
           backImage={profile.card_back_url}
           imageFit="cover"
           bandColor={bandColor}
+          anchorX={5}
         />
       </motion.div>
+      </div>
     </section>
   );
 }

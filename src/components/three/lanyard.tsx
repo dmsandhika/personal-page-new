@@ -66,6 +66,9 @@ interface LanyardProps {
   lanyardImage?: string | null;
   lanyardWidth?: number;
   bandColor?: string;
+  // Horizontal world-space offset of the hang point, applied on desktop only
+  // (ignored on mobile so the card stays centered). Positive = right.
+  anchorX?: number;
 }
 
 export default function Lanyard({
@@ -79,6 +82,7 @@ export default function Lanyard({
   lanyardImage = null,
   lanyardWidth = 1,
   bandColor = "white",
+  anchorX = 0,
 }: LanyardProps) {
   const [isMobile, setIsMobile] = useState<boolean>(
     () => typeof window !== "undefined" && window.innerWidth < 768
@@ -101,6 +105,7 @@ export default function Lanyard({
         <ambientLight intensity={Math.PI} />
         <Physics gravity={gravity} timeStep={isMobile ? 1 / 30 : 1 / 60}>
           <Band
+            key={isMobile ? 0 : anchorX}
             isMobile={isMobile}
             frontImage={frontImage}
             backImage={backImage}
@@ -108,6 +113,7 @@ export default function Lanyard({
             lanyardImage={lanyardImage}
             lanyardWidth={lanyardWidth}
             bandColor={bandColor}
+            anchorX={isMobile ? 0 : anchorX}
           />
         </Physics>
         <Environment blur={0.75}>
@@ -155,6 +161,7 @@ interface BandProps {
   lanyardImage?: string | null;
   lanyardWidth?: number;
   bandColor?: string;
+  anchorX?: number;
 }
 
 type LanyardRigidBody = RapierRigidBody & {
@@ -171,6 +178,7 @@ function Band({
   lanyardImage = null,
   lanyardWidth = 1,
   bandColor = "white",
+  anchorX = 0,
 }: BandProps) {
   const band = useRef<THREE.Mesh<InstanceType<typeof MeshLineGeometry>, InstanceType<typeof MeshLineMaterial>>>(
     null!
@@ -324,8 +332,8 @@ function Band({
 
   return (
     <>
-      <group position={[0, 4, 0]}>
-        <RigidBody ref={fixed} {...segmentProps} type="fixed" />
+      <group position={[anchorX, 4, 0]}>
+        <RigidBody position={[0, 0, 0]} ref={fixed} {...segmentProps} type="fixed" />
         <RigidBody position={[0.5, 0, 0]} ref={j1} {...segmentProps} type="dynamic">
           <BallCollider args={[0.1]} />
         </RigidBody>

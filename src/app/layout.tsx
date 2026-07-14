@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { ThemeProvider } from "@/components/theme-provider";
 import { LocaleProvider, LOCALE_COOKIE } from "@/lib/i18n/locale-context";
 import type { Locale } from "@/lib/i18n/dictionaries";
+import { siteUrl } from "@/lib/site";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -17,8 +18,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "Personal Page",
   description: "Personal page & portfolio",
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default async function RootLayout({

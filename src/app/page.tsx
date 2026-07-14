@@ -1,4 +1,6 @@
+import type { Metadata } from "next";
 import { supabasePublic } from "@/lib/supabase/public";
+import { getProfile, siteUrl } from "@/lib/site";
 import { Hero } from "@/components/sections/hero";
 import { About } from "@/components/sections/about";
 import { Experience } from "@/components/sections/experience";
@@ -8,10 +10,41 @@ import { PageControls } from "@/components/page-controls";
 
 export const revalidate = 0;
 
+export async function generateMetadata(): Promise<Metadata> {
+  const profile = await getProfile();
+  if (!profile) return {};
+
+  const title = profile.title ? `${profile.name} — ${profile.title}` : profile.name;
+  const description = profile.bio || `${profile.name} · ${profile.title}`;
+  const image = profile.avatar_url ?? undefined;
+
+  return {
+    title,
+    description,
+    authors: [{ name: profile.name }],
+    alternates: { canonical: "/" },
+    openGraph: {
+      type: "profile",
+      title,
+      description,
+      url: siteUrl,
+      siteName: profile.name,
+      locale: "id_ID",
+      images: image ? [{ url: image, alt: profile.name }] : undefined,
+    },
+    twitter: {
+      card: image ? "summary_large_image" : "summary",
+      title,
+      description,
+      images: image ? [image] : undefined,
+    },
+  };
+}
+
 export default async function Home() {
-  const [{ data: profile }, { data: experience }, { data: projects }] =
+  const [profile, { data: experience }, { data: projects }] =
     await Promise.all([
-      supabasePublic.from("profile").select("*").limit(1).single(),
+      getProfile(),
       supabasePublic
         .from("experience")
         .select("*")
@@ -31,8 +64,30 @@ export default async function Home() {
     );
   }
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: profile.name,
+    jobTitle: profile.title || undefined,
+    description: profile.bio || undefined,
+    image: profile.avatar_url || undefined,
+    email: profile.email ? `mailto:${profile.email}` : undefined,
+    address: profile.location || undefined,
+    url: siteUrl,
+    sameAs: [
+      profile.github_url,
+      profile.linkedin_url,
+      profile.twitter_url,
+      profile.website_url,
+    ].filter(Boolean),
+  };
+
   return (
     <main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <PageControls />
       <Hero profile={profile} />
       <About profile={profile} />

@@ -1,8 +1,14 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { logout } from "./login/actions";
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeToggle } from "@/components/theme-toggle";
+
+// Keep the admin panel out of search engines.
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 const NAV_ITEMS = [
   { href: "/admin/profile", label: "Profile" },

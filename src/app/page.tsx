@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { supabasePublic } from "@/lib/supabase/public";
 import { getProfile, siteUrl } from "@/lib/site";
 import { Hero } from "@/components/sections/hero";
+import { TechMarquee } from "@/components/tech-marquee";
 import { About } from "@/components/sections/about";
 import { Experience } from "@/components/sections/experience";
 import { Projects } from "@/components/sections/projects";
@@ -90,6 +91,7 @@ export default async function Home() {
       />
       <PageControls />
       <Hero profile={profile} />
+      <TechMarquee />
       <About profile={profile} />
       <Experience items={experience ?? []} />
       <Projects items={projects ?? []} />

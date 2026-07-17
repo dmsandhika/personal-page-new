@@ -3,6 +3,7 @@
 import { Mail, Globe } from "lucide-react";
 import type { Profile } from "@/lib/types";
 import { FadeIn } from "@/components/motion/fade-in";
+import { SectionHeading } from "@/components/section-heading";
 import { Button } from "@/components/ui/button";
 import { GithubIcon, LinkedinIcon, TwitterIcon } from "@/components/icons/social-icons";
 import { useLocale } from "@/lib/i18n/locale-context";
@@ -17,14 +18,21 @@ export function Contact({ profile }: { profile: Profile }) {
   ].filter((link) => link.href);
 
   return (
-    <section id="contact" className="mx-auto max-w-2xl px-6 py-24 text-center">
+    <section id="contact" className="mx-auto max-w-3xl px-6 py-32 text-center sm:px-10">
       <FadeIn>
-        <h2 className="mb-4 text-sm font-semibold tracking-widest text-muted-foreground uppercase">
+        <SectionHeading number="04" align="center">
           {t("section.contact")}
-        </h2>
-        <p className="mb-8 text-lg text-muted-foreground">{t("contact.subtitle")}</p>
+        </SectionHeading>
+        <p className="mx-auto mb-10 max-w-md text-xl leading-snug text-muted-foreground sm:text-2xl">
+          {t("contact.subtitle")}
+        </p>
 
-        <Button size="lg" nativeButton={false} render={<a href={`mailto:${profile.email}`} />}>
+        <Button
+          size="lg"
+          nativeButton={false}
+          className="h-11 rounded-full px-6 text-sm shadow-[0_12px_30px_-12px_var(--primary)] transition-all hover:-translate-y-0.5 hover:shadow-[0_16px_36px_-12px_var(--primary)]"
+          render={<a href={`mailto:${profile.email}`} />}
+        >
           <Mail className="size-4" />
           {profile.email}
         </Button>

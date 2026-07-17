@@ -1,94 +1,100 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
-import { useTheme } from "next-themes";
 import { ArrowDown } from "lucide-react";
 import type { Profile } from "@/lib/types";
 import { useLocale } from "@/lib/i18n/locale-context";
 import { pickLocalized } from "@/lib/i18n/dictionaries";
 
-// Code-split the heavy 3D lanyard (three.js + rapier) into its own chunk so it
-// is only downloaded on desktop, where it actually renders. ssr:false + the
-// isDesktop gate below mean it never loads during hydration or on mobile.
-const Lanyard = dynamic(() => import("@/components/three/lanyard"), { ssr: false });
+const ease = [0.22, 1, 0.36, 1] as const;
+
+// Sudut siku dekoratif ala viewfinder di tiap pojok potret
+function Corner({ className }: { className: string }) {
+  return <span className={`absolute size-4 border-primary ${className}`} />;
+}
 
 export function Hero({ profile }: { profile: Profile }) {
   const { locale, t } = useLocale();
-  const { resolvedTheme } = useTheme();
   const title = pickLocalized(locale, profile.title, profile.title_en);
-  const bandColor = resolvedTheme === "dark" ? "#ffffff" : "#111111";
-
-  // Only mount the (heavy) 3D lanyard on desktop; mobile gets a lightweight
-  // avatar image instead so the WebGL/physics bundle never loads there.
-  const [isDesktop, setIsDesktop] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia("(min-width: 1024px)");
-    const update = () => setIsDesktop(mq.matches);
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, []);
 
   return (
-    <section className="flex min-h-[90vh] flex-col items-center justify-center px-6 py-16">
-      <div className="relative flex w-full flex-col items-center gap-6 lg:max-w-6xl lg:min-h-140 lg:flex-row lg:justify-center lg:gap-8 lg:overflow-hidden lg:rounded-3xl lg:border lg:border-border lg:bg-muted/20 lg:p-10 lg:shadow-[inset_0_2px_28px_rgba(0,0,0,0.18)] dark:lg:shadow-[inset_0_2px_28px_rgba(0,0,0,0.55)]">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="order-last flex flex-col items-center gap-6 text-center lg:pointer-events-none lg:relative lg:z-10 lg:order-0 lg:flex-1 lg:items-start lg:text-left"
-        >
-        <div className="space-y-3">
-          <motion.h1
-            className="text-4xl font-bold tracking-tight sm:text-6xl"
-            initial={{ opacity: 0, y: 12 }}
+    <section className="relative mx-auto flex min-h-screen max-w-6xl flex-col justify-center px-6 py-28 sm:px-10">
+      <div className="grid items-center gap-14 lg:grid-cols-[1.4fr_1fr] lg:gap-20">
+        {/* Kolom teks */}
+        <div className="order-last lg:order-first">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            transition={{ duration: 0.6, ease }}
+            className="mb-7 flex items-center gap-2.5 font-mono text-xs tracking-[0.25em] text-muted-foreground uppercase"
+          >
+            <span className="relative flex size-2">
+              <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-60" />
+              <span className="relative inline-flex size-2 rounded-full bg-primary" />
+            </span>
+            {profile.location ? `Based in ${profile.location}` : "Available for work"}
+          </motion.div>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.05, ease }}
+            className="font-display text-[clamp(3rem,10vw,7rem)] leading-[0.9] font-bold"
           >
             {profile.name}
           </motion.h1>
+
           <motion.p
-            className="text-lg text-muted-foreground sm:text-xl"
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
+            transition={{ duration: 0.7, delay: 0.15, ease }}
+            className="mt-6 flex items-center gap-3 text-lg text-muted-foreground sm:text-xl"
           >
+            <span className="font-mono text-primary">{"//"}</span>
             {title}
           </motion.p>
+
+          <motion.a
+            href="#about"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.7, delay: 0.4, ease }}
+            className="group mt-12 inline-flex items-center gap-3 font-mono text-xs tracking-[0.2em] text-foreground uppercase transition-colors hover:text-primary"
+            aria-label={t("hero.scrollAria")}
+          >
+            <span className="flex size-9 items-center justify-center rounded-full border border-border transition-colors group-hover:border-primary group-hover:bg-primary/10">
+              <ArrowDown className="size-3.5 transition-transform group-hover:translate-y-0.5" />
+            </span>
+            {t("hero.scrollAria")}
+          </motion.a>
         </div>
 
-        <motion.a
-          href="#about"
-          className="pointer-events-auto mt-4 inline-flex size-10 items-center justify-center rounded-full border text-muted-foreground hover:border-primary hover:text-primary"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.6 }}
-          aria-label={t("hero.scrollAria")}
-        >
-          <ArrowDown className="size-4" />
-        </motion.a>
-      </motion.div>
-
-      {isDesktop && (
-        <motion.div
-          className="lg:absolute lg:inset-0 lg:z-0"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          <Lanyard
-            position={[0, 0, 20]}
-            gravity={[0, -40, 0]}
-            frontImage={profile.avatar_url}
-            backImage={profile.card_back_url}
-            imageFit="cover"
-            bandColor={bandColor}
-            anchorX={5}
-          />
-        </motion.div>
-      )}
+        {/* Potret grayscale → warna saat hover, dengan corner ticks & caption mono */}
+        {profile.avatar_url && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.2, ease }}
+            className="group relative mx-auto w-full max-w-xs lg:mx-0 lg:justify-self-end"
+          >
+            <div className="relative overflow-hidden rounded-lg border border-border">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={profile.avatar_url}
+                alt={profile.name}
+                className="aspect-4/5 w-full object-cover grayscale transition-all duration-700 ease-out group-hover:scale-[1.03] group-hover:grayscale-0"
+              />
+              <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-linear-to-t from-background/90 to-transparent px-4 py-3 font-mono text-[0.65rem] tracking-widest text-foreground/70 uppercase">
+                <span>{profile.name}</span>
+                <span className="text-primary">●</span>
+              </div>
+            </div>
+            <Corner className="-top-1.5 -left-1.5 border-t-2 border-l-2" />
+            <Corner className="-top-1.5 -right-1.5 border-t-2 border-r-2" />
+            <Corner className="-bottom-1.5 -left-1.5 border-b-2 border-l-2" />
+            <Corner className="-right-1.5 -bottom-1.5 border-r-2 border-b-2" />
+          </motion.div>
+        )}
       </div>
     </section>
   );

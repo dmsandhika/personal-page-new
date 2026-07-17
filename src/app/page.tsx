@@ -8,6 +8,7 @@ import { Experience } from "@/components/sections/experience";
 import { Projects } from "@/components/sections/projects";
 import { Contact } from "@/components/sections/contact";
 import { PageControls } from "@/components/page-controls";
+import { SiteLogo } from "@/components/site-logo";
 
 export const revalidate = 0;
 
@@ -84,11 +85,12 @@ export default async function Home() {
   };
 
   return (
-    <main>
+    <main id="top">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <SiteLogo />
       <PageControls />
       <Hero profile={profile} />
       <TechMarquee />

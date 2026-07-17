@@ -31,6 +31,14 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  icons: {
+    // Favicon adaptif: versi yang cocok dengan tema browser (light/dark).
+    icon: [
+      { url: "/assets/logo/Logo_bg_light.png", media: "(prefers-color-scheme: light)" },
+      { url: "/assets/logo/Logo_bg_dark.png", media: "(prefers-color-scheme: dark)" },
+    ],
+    apple: "/assets/logo/Logo_bg_light.png",
+  },
 };
 
 export default async function RootLayout({

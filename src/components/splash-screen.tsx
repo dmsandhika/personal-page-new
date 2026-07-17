@@ -47,7 +47,7 @@ export function SplashScreen() {
       {!done && (
         <motion.div
           key="splash"
-          className="fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden bg-background"
+          className="fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden bg-background px-6"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
@@ -62,7 +62,7 @@ export function SplashScreen() {
               <motion.span
                 key={index}
                 lang={current.lang}
-                className="font-display text-6xl font-bold tracking-tight sm:text-8xl"
+                className="text-center font-display text-5xl font-bold tracking-tight sm:text-8xl"
                 style={{ color: current.color }}
                 initial={{ opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}

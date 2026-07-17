@@ -30,7 +30,7 @@ export function Contact({ profile }: { profile: Profile }) {
         <Button
           size="lg"
           nativeButton={false}
-          className="h-11 rounded-full px-6 text-sm shadow-[0_12px_30px_-12px_var(--primary)] transition-all hover:-translate-y-0.5 hover:shadow-[0_16px_36px_-12px_var(--primary)]"
+          className="h-auto min-h-11 max-w-full rounded-full px-6 py-2.5 text-sm leading-snug break-all whitespace-normal shadow-[0_12px_30px_-12px_var(--primary)] transition-all hover:-translate-y-0.5 hover:shadow-[0_16px_36px_-12px_var(--primary)]"
           render={<a href={`mailto:${profile.email}`} />}
         >
           <Mail className="size-4" />

@@ -31,10 +31,10 @@ export function Hero({ profile }: { profile: Profile }) {
   const avatarUrl = avatarByLocale[locale] || profile.avatar_url;
 
   return (
-    <section className="relative mx-auto flex min-h-screen max-w-6xl flex-col justify-center px-6 py-28 sm:px-10">
-      <div className="grid items-center gap-14 lg:grid-cols-[1.4fr_1fr] lg:gap-20">
-        {/* Kolom teks */}
-        <div className="order-last lg:order-first">
+    <section className="relative mx-auto flex min-h-screen max-w-6xl flex-col justify-center px-6 py-24 sm:px-10 sm:py-28">
+      <div className="grid items-center gap-10 sm:gap-14 lg:grid-cols-[1.4fr_1fr] lg:gap-20">
+        {/* Kolom teks — tampil duluan (nama dulu) di mobile & desktop */}
+        <div>
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -52,7 +52,7 @@ export function Hero({ profile }: { profile: Profile }) {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.05, ease }}
-            className="font-display text-[clamp(3rem,10vw,7rem)] leading-[0.9] font-bold"
+            className="font-display text-[clamp(2.75rem,10vw,7rem)] leading-[0.9] font-bold wrap-break-word hyphens-auto"
           >
             {profile.name}
           </motion.h1>

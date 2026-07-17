@@ -92,7 +92,7 @@ export function Projects({ items }: { items: Project[] }) {
 
       {/* Dialog detail project */}
       <Dialog open={selected !== null} onOpenChange={(open) => !open && setSelected(null)}>
-        <DialogContent className="gap-0 overflow-hidden p-0 sm:max-w-xl">
+        <DialogContent className="max-h-[90dvh] gap-0 overflow-y-auto p-0 sm:max-w-xl">
           {selected && (
             <>
               {selected.image_url && (

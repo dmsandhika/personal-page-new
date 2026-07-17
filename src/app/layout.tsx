@@ -57,7 +57,7 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
           <SplashScreen />
           <AuroraBackground />
           <LocaleProvider initialLocale={initialLocale}>{children}</LocaleProvider>

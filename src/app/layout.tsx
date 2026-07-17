@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { cookies } from "next/headers";
 import { ThemeProvider } from "@/components/theme-provider";
+import { SplashScreen } from "@/components/splash-screen";
 import { LocaleProvider, LOCALE_COOKIE } from "@/lib/i18n/locale-context";
 import type { Locale } from "@/lib/i18n/dictionaries";
 import { siteUrl } from "@/lib/site";
@@ -43,6 +44,7 @@ export default async function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <SplashScreen />
           <LocaleProvider initialLocale={initialLocale}>{children}</LocaleProvider>
         </ThemeProvider>
       </body>

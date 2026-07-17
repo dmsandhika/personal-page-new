@@ -45,9 +45,14 @@ export function Experience({ items }: { items: ExperienceItem[] }) {
             <FadeIn key={item.id} delay={i * 0.05}>
               <div className="group relative border-s border-border ps-8 transition-colors hover:border-primary/60">
                 <span className="absolute -inset-s-1.25 top-2 size-2.5 rounded-full bg-border ring-4 ring-background transition-colors group-hover:bg-primary" />
-                <p className="font-mono text-xs tracking-wider text-muted-foreground">
-                  {formatPeriod(item.start_date, item.end_date, locale, t("experience.present"))}
-                </p>
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                  <p className="font-mono text-xs tracking-wider text-muted-foreground">
+                    {formatPeriod(item.start_date, item.end_date, locale, t("experience.present"))}
+                  </p>
+                  <span className="rounded-full border border-primary/40 px-2 py-0.5 font-mono text-[0.6rem] tracking-wider text-primary uppercase">
+                    {t(item.employment_type === "intern" ? "experience.intern" : "experience.work")}
+                  </span>
+                </div>
                 <h3 className="mt-2 font-display text-xl font-semibold tracking-tight">{role}</h3>
                 <p className="mt-0.5 text-sm text-primary">
                   {item.company}

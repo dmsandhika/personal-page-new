@@ -9,6 +9,7 @@ function experienceFromForm(formData: FormData) {
     role_en: String(formData.get("role_en") ?? "") || null,
     role_ar: String(formData.get("role_ar") ?? "") || null,
     role_jv: String(formData.get("role_jv") ?? "") || null,
+    employment_type: String(formData.get("employment_type") ?? "work") || "work",
     company: String(formData.get("company") ?? ""),
     location: String(formData.get("location") ?? "") || null,
     start_date: String(formData.get("start_date") ?? ""),

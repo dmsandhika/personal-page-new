@@ -9,6 +9,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { TranslateButton } from "@/components/admin/translate-button";
 import {
   Dialog,
@@ -53,9 +60,26 @@ export function ExperienceFormDialog({
         <form action={handleSubmit} className="space-y-4">
           {isEdit && <input type="hidden" name="id" value={experience!.id} />}
 
-          <div className="space-y-1.5">
-            <Label htmlFor="company">Perusahaan</Label>
-            <Input id="company" name="company" defaultValue={experience?.company} required />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-1.5">
+              <Label htmlFor="company">Perusahaan</Label>
+              <Input id="company" name="company" defaultValue={experience?.company} required />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="employment_type">Tipe</Label>
+              <Select
+                name="employment_type"
+                defaultValue={experience?.employment_type ?? "work"}
+              >
+                <SelectTrigger id="employment_type" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="work">Kerja</SelectItem>
+                  <SelectItem value="intern">Magang</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <div className="flex justify-end">

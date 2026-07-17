@@ -48,6 +48,7 @@ export type Experience = {
   role_en: string | null;
   role_ar: string | null;
   role_jv: string | null;
+  employment_type: string;
   company: string;
   location: string | null;
   start_date: string;

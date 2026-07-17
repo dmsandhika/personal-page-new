@@ -8,8 +8,12 @@ function projectFromForm(formData: FormData) {
   return {
     title: String(formData.get("title") ?? ""),
     title_en: String(formData.get("title_en") ?? "") || null,
+    title_ar: String(formData.get("title_ar") ?? "") || null,
+    title_jv: String(formData.get("title_jv") ?? "") || null,
     description: String(formData.get("description") ?? ""),
     description_en: String(formData.get("description_en") ?? "") || null,
+    description_ar: String(formData.get("description_ar") ?? "") || null,
+    description_jv: String(formData.get("description_jv") ?? "") || null,
     image_url: String(formData.get("image_url") ?? "") || null,
     tags: tagsRaw
       .split(",")

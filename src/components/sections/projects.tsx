@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { GithubIcon } from "@/components/icons/social-icons";
 import { useLocale } from "@/lib/i18n/locale-context";
-import { pickLocalized } from "@/lib/i18n/dictionaries";
+import { pickByLocale } from "@/lib/i18n/dictionaries";
 
 // Placeholder untuk project tanpa gambar: pola grid + simbol mono
 function Thumbnail({ project, title }: { project: Project; title: string }) {
@@ -45,10 +45,20 @@ export function Projects({ items }: { items: Project[] }) {
   if (items.length === 0) return null;
 
   const selectedTitle = selected
-    ? pickLocalized(locale, selected.title, selected.title_en)
+    ? pickByLocale(locale, {
+        id: selected.title,
+        en: selected.title_en,
+        ar: selected.title_ar,
+        jv: selected.title_jv,
+      })
     : "";
   const selectedDescription = selected
-    ? pickLocalized(locale, selected.description, selected.description_en)
+    ? pickByLocale(locale, {
+        id: selected.description,
+        en: selected.description_en,
+        ar: selected.description_ar,
+        jv: selected.description_jv,
+      })
     : "";
 
   return (
@@ -60,7 +70,12 @@ export function Projects({ items }: { items: Project[] }) {
       {/* Galeri grid: kartu ringkas, klik untuk detail */}
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((project, i) => {
-          const title = pickLocalized(locale, project.title, project.title_en);
+          const title = pickByLocale(locale, {
+            id: project.title,
+            en: project.title_en,
+            ar: project.title_ar,
+            jv: project.title_jv,
+          });
 
           return (
             <FadeIn key={project.id} delay={(i % 3) * 0.06}>

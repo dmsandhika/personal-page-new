@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { TranslateButton } from "@/components/admin/translate-button";
 import {
   Dialog,
   DialogContent,
@@ -57,10 +58,16 @@ export function ExperienceFormDialog({
             <Input id="company" name="company" defaultValue={experience?.company} required />
           </div>
 
+          <div className="flex justify-end">
+            <TranslateButton sources={["role", "description"]} />
+          </div>
+
           <Tabs defaultValue="id">
             <TabsList>
               <TabsTrigger value="id">Indonesia</TabsTrigger>
               <TabsTrigger value="en">English</TabsTrigger>
+              <TabsTrigger value="ar">العربية</TabsTrigger>
+              <TabsTrigger value="jv">Jawa</TabsTrigger>
             </TabsList>
 
             <TabsContent value="id" keepMounted className="space-y-4">
@@ -82,6 +89,28 @@ export function ExperienceFormDialog({
               <div className="space-y-1.5">
                 <Label htmlFor="description_en">Description (English)</Label>
                 <Textarea id="description_en" name="description_en" rows={4} defaultValue={experience?.description_en ?? ""} />
+              </div>
+            </TabsContent>
+
+            <TabsContent value="ar" keepMounted className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="role_ar">Role (Arab)</Label>
+                <Input id="role_ar" name="role_ar" dir="rtl" lang="ar" defaultValue={experience?.role_ar ?? ""} />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="description_ar">Description (Arab)</Label>
+                <Textarea id="description_ar" name="description_ar" rows={4} dir="rtl" lang="ar" defaultValue={experience?.description_ar ?? ""} />
+              </div>
+            </TabsContent>
+
+            <TabsContent value="jv" keepMounted className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="role_jv">Role (Jawa)</Label>
+                <Input id="role_jv" name="role_jv" defaultValue={experience?.role_jv ?? ""} />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="description_jv">Description (Jawa)</Label>
+                <Textarea id="description_jv" name="description_jv" rows={4} defaultValue={experience?.description_jv ?? ""} />
               </div>
             </TabsContent>
           </Tabs>

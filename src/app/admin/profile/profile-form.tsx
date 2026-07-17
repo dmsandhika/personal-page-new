@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { TranslateButton } from "@/components/admin/translate-button";
 
 // Semua field gambar yang dikelola form (foto hero per bahasa + belakang kartu).
 type ImgKey =
@@ -166,6 +167,13 @@ export function ProfileForm({ profile }: { profile: Profile }) {
           <div className="space-y-1.5">
             <Label htmlFor="name">Nama</Label>
             <Input id="name" name="name" defaultValue={profile.name} required />
+          </div>
+
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="text-sm text-muted-foreground">
+              Isi bahasa Indonesia dulu, lalu terjemahkan otomatis (hasil = draft, bisa diedit).
+            </p>
+            <TranslateButton sources={["title", "bio"]} />
           </div>
 
           <Tabs defaultValue="id">

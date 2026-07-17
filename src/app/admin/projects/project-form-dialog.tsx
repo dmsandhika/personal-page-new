@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { TranslateButton } from "@/components/admin/translate-button";
 import {
   Dialog,
   DialogContent,
@@ -89,10 +90,16 @@ export function ProjectFormDialog({
         <form action={handleSubmit} className="space-y-4">
           {isEdit && <input type="hidden" name="id" value={project!.id} />}
 
+          <div className="flex justify-end">
+            <TranslateButton sources={["title", "description"]} />
+          </div>
+
           <Tabs defaultValue="id">
             <TabsList>
               <TabsTrigger value="id">Indonesia</TabsTrigger>
               <TabsTrigger value="en">English</TabsTrigger>
+              <TabsTrigger value="ar">العربية</TabsTrigger>
+              <TabsTrigger value="jv">Jawa</TabsTrigger>
             </TabsList>
 
             <TabsContent value="id" keepMounted className="space-y-4">
@@ -114,6 +121,28 @@ export function ProjectFormDialog({
               <div className="space-y-1.5">
                 <Label htmlFor="description_en">Description (English)</Label>
                 <Textarea id="description_en" name="description_en" rows={4} defaultValue={project?.description_en ?? ""} />
+              </div>
+            </TabsContent>
+
+            <TabsContent value="ar" keepMounted className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="title_ar">Title (Arab)</Label>
+                <Input id="title_ar" name="title_ar" dir="rtl" lang="ar" defaultValue={project?.title_ar ?? ""} />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="description_ar">Description (Arab)</Label>
+                <Textarea id="description_ar" name="description_ar" rows={4} dir="rtl" lang="ar" defaultValue={project?.description_ar ?? ""} />
+              </div>
+            </TabsContent>
+
+            <TabsContent value="jv" keepMounted className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="title_jv">Title (Jawa)</Label>
+                <Input id="title_jv" name="title_jv" defaultValue={project?.title_jv ?? ""} />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="description_jv">Description (Jawa)</Label>
+                <Textarea id="description_jv" name="description_jv" rows={4} defaultValue={project?.description_jv ?? ""} />
               </div>
             </TabsContent>
           </Tabs>

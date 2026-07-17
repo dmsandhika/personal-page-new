@@ -4,7 +4,7 @@ import type { Experience as ExperienceItem } from "@/lib/types";
 import { FadeIn } from "@/components/motion/fade-in";
 import { SectionHeading } from "@/components/section-heading";
 import { useLocale } from "@/lib/i18n/locale-context";
-import { pickLocalized, type Locale } from "@/lib/i18n/dictionaries";
+import { pickByLocale, type Locale } from "@/lib/i18n/dictionaries";
 
 function formatPeriod(start: string, end: string | null, locale: Locale, presentLabel: string) {
   const format = (d: string) =>
@@ -28,8 +28,18 @@ export function Experience({ items }: { items: ExperienceItem[] }) {
 
       <div className="space-y-12">
         {items.map((item, i) => {
-          const role = pickLocalized(locale, item.role, item.role_en);
-          const description = pickLocalized(locale, item.description ?? "", item.description_en);
+          const role = pickByLocale(locale, {
+            id: item.role,
+            en: item.role_en,
+            ar: item.role_ar,
+            jv: item.role_jv,
+          });
+          const description = pickByLocale(locale, {
+            id: item.description ?? "",
+            en: item.description_en,
+            ar: item.description_ar,
+            jv: item.description_jv,
+          });
 
           return (
             <FadeIn key={item.id} delay={i * 0.05}>

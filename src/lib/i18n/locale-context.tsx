@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { type DictionaryKey, type Locale, translate } from "./dictionaries";
 
 const LOCALE_COOKIE = "locale";
@@ -26,6 +26,13 @@ export function LocaleProvider({
     setLocaleState(next);
     document.cookie = `${LOCALE_COOKIE}=${next}; path=/; max-age=31536000`;
   }, []);
+
+  // Sinkronkan atribut <html lang/dir> dengan locale aktif. Arab = RTL.
+  useEffect(() => {
+    const el = document.documentElement;
+    el.lang = locale;
+    el.dir = locale === "ar" ? "rtl" : "ltr";
+  }, [locale]);
 
   const value = useMemo<LocaleContextValue>(
     () => ({

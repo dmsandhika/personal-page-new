@@ -3,9 +3,16 @@ export type Profile = {
   name: string;
   title: string;
   title_en: string | null;
+  title_ar: string | null;
+  title_jv: string | null;
   bio: string;
   bio_en: string | null;
+  bio_ar: string | null;
+  bio_jv: string | null;
   avatar_url: string | null;
+  avatar_url_en: string | null;
+  avatar_url_ar: string | null;
+  avatar_url_jv: string | null;
   card_back_url: string | null;
   email: string;
   location: string | null;

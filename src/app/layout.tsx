@@ -44,6 +44,7 @@ export default async function RootLayout({
   return (
     <html
       lang={initialLocale}
+      dir={initialLocale === "ar" ? "rtl" : "ltr"}
       className={`${schibsted.variable} ${jetbrainsMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >

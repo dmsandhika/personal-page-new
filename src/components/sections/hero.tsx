@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowDown } from "lucide-react";
 import type { Profile } from "@/lib/types";
 import { useLocale } from "@/lib/i18n/locale-context";
-import { pickLocalized } from "@/lib/i18n/dictionaries";
+import { pickByLocale } from "@/lib/i18n/dictionaries";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -15,7 +15,20 @@ function Corner({ className }: { className: string }) {
 
 export function Hero({ profile }: { profile: Profile }) {
   const { locale, t } = useLocale();
-  const title = pickLocalized(locale, profile.title, profile.title_en);
+  const title = pickByLocale(locale, {
+    id: profile.title,
+    en: profile.title_en,
+    ar: profile.title_ar,
+    jv: profile.title_jv,
+  });
+  // Foto hero berganti per bahasa; jatuh ke foto default (id) kalau kosong.
+  const avatarByLocale: Record<string, string | null> = {
+    id: profile.avatar_url,
+    en: profile.avatar_url_en,
+    ar: profile.avatar_url_ar,
+    jv: profile.avatar_url_jv,
+  };
+  const avatarUrl = avatarByLocale[locale] || profile.avatar_url;
 
   return (
     <section className="relative mx-auto flex min-h-screen max-w-6xl flex-col justify-center px-6 py-28 sm:px-10">
@@ -32,7 +45,7 @@ export function Hero({ profile }: { profile: Profile }) {
               <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-60" />
               <span className="relative inline-flex size-2 rounded-full bg-primary" />
             </span>
-            {profile.location ? `Based in ${profile.location}` : "Available for work"}
+            {profile.location ? `${t("hero.basedIn")} ${profile.location}` : t("hero.available")}
           </motion.div>
 
           <motion.h1
@@ -70,7 +83,7 @@ export function Hero({ profile }: { profile: Profile }) {
         </div>
 
         {/* Potret grayscale → warna saat hover, dengan corner ticks & caption mono */}
-        {profile.avatar_url && (
+        {avatarUrl && (
           <motion.div
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -78,10 +91,13 @@ export function Hero({ profile }: { profile: Profile }) {
             className="group relative mx-auto w-full max-w-xs lg:mx-0 lg:justify-self-end"
           >
             <div className="relative overflow-hidden rounded-lg border border-border">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={profile.avatar_url}
+              <motion.img
+                key={avatarUrl}
+                src={avatarUrl}
                 alt={profile.name}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.45, ease }}
                 className="aspect-4/5 w-full object-cover grayscale transition-all duration-700 ease-out group-hover:scale-[1.03] group-hover:grayscale-0"
               />
               <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-linear-to-t from-background/90 to-transparent px-4 py-3 font-mono text-[0.65rem] tracking-widest text-foreground/70 uppercase">

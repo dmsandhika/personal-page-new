@@ -33,8 +33,8 @@ export function Experience({ items }: { items: ExperienceItem[] }) {
 
           return (
             <FadeIn key={item.id} delay={i * 0.05}>
-              <div className="group relative border-l border-border pl-8 transition-colors hover:border-primary/60">
-                <span className="absolute -left-1.25 top-2 size-2.5 rounded-full bg-border ring-4 ring-background transition-colors group-hover:bg-primary" />
+              <div className="group relative border-s border-border ps-8 transition-colors hover:border-primary/60">
+                <span className="absolute -inset-s-1.25 top-2 size-2.5 rounded-full bg-border ring-4 ring-background transition-colors group-hover:bg-primary" />
                 <p className="font-mono text-xs tracking-wider text-muted-foreground">
                   {formatPeriod(item.start_date, item.end_date, locale, t("experience.present"))}
                 </p>

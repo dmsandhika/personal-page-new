@@ -4,11 +4,16 @@ import type { Profile } from "@/lib/types";
 import { FadeIn } from "@/components/motion/fade-in";
 import { SectionHeading } from "@/components/section-heading";
 import { useLocale } from "@/lib/i18n/locale-context";
-import { pickLocalized } from "@/lib/i18n/dictionaries";
+import { pickByLocale } from "@/lib/i18n/dictionaries";
 
 export function About({ profile }: { profile: Profile }) {
   const { locale, t } = useLocale();
-  const bio = pickLocalized(locale, profile.bio, profile.bio_en);
+  const bio = pickByLocale(locale, {
+    id: profile.bio,
+    en: profile.bio_en,
+    ar: profile.bio_ar,
+    jv: profile.bio_jv,
+  });
 
   return (
     <section id="about" className="mx-auto max-w-3xl px-6 py-28 sm:px-10">

@@ -98,7 +98,7 @@ export function Hero({ profile }: { profile: Profile }) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.45, ease }}
-                className="aspect-4/5 w-full object-cover grayscale transition-all duration-700 ease-out group-hover:scale-[1.03] group-hover:grayscale-0"
+                className="aspect-4/5 w-full object-cover transition-all duration-700 ease-out group-hover:scale-[1.03] [@media(hover:hover)]:grayscale [@media(hover:hover)]:group-hover:grayscale-0"
               />
               <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-linear-to-t from-background/90 to-transparent px-4 py-3 font-mono text-[0.65rem] tracking-widest text-foreground/70 uppercase">
                 <span>{profile.name}</span>

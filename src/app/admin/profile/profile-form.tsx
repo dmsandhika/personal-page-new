@@ -4,6 +4,7 @@ import { useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { updateProfile } from "./actions";
 import { deleteImage, uploadImage } from "../upload-action";
+import { compressImage } from "@/lib/compress-image";
 import type { Profile } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -62,8 +63,9 @@ export function ProfileForm({ profile }: { profile: Profile }) {
     currentUrl: string
   ): Promise<string | undefined> {
     if (fileInput instanceof File && fileInput.size > 0) {
+      const compressed = await compressImage(fileInput);
       const uploadForm = new FormData();
-      uploadForm.set("file", fileInput);
+      uploadForm.set("file", compressed);
       const result = await uploadImage(uploadForm);
       if (result.error) {
         toast.error(result.error);

@@ -3,10 +3,10 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   experimental: {
     serverActions: {
-      // Upload gambar diizinkan sampai 5MB (lihat upload-action.ts). Naikkan
-      // limit body Server Actions dari default 1MB + sedikit headroom untuk
-      // overhead multipart form.
-      bodySizeLimit: "6mb",
+      // Gambar dikompres di browser sebelum upload (lihat lib/compress-image.ts),
+      // jadi body biasanya kecil. Limit dinaikkan sebagai headroom kalau kompresi
+      // gagal untuk file sangat besar, biar errornya jelas dari validasi upload.
+      bodySizeLimit: "10mb",
     },
   },
 };

@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowUpRight, ExternalLink } from "lucide-react";
+import { ArrowUpRight, ExternalLink, Images } from "lucide-react";
 import type { Project } from "@/lib/types";
+import { cn } from "@/lib/utils";
 import { FadeIn } from "@/components/motion/fade-in";
 import { SectionHeading } from "@/components/section-heading";
 import { Badge } from "@/components/ui/badge";
@@ -18,13 +19,19 @@ import { GithubIcon } from "@/components/icons/social-icons";
 import { useLocale } from "@/lib/i18n/locale-context";
 import { pickByLocale } from "@/lib/i18n/dictionaries";
 
-// Placeholder untuk project tanpa gambar: pola grid + simbol mono
-function Thumbnail({ project, title }: { project: Project; title: string }) {
-  if (project.image_url) {
+// Semua gambar sebuah project (fallback ke image_url lama bila array kosong).
+function projectImages(project: Project): string[] {
+  if (project.image_urls && project.image_urls.length > 0) return project.image_urls;
+  return project.image_url ? [project.image_url] : [];
+}
+
+// Sampul kartu: gambar pertama, atau placeholder pola grid bila tak ada gambar.
+function Thumbnail({ cover, title }: { cover?: string; title: string }) {
+  if (cover) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
       <img
-        src={project.image_url}
+        src={cover}
         alt={title}
         loading="lazy"
         className="aspect-video w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
@@ -41,8 +48,11 @@ function Thumbnail({ project, title }: { project: Project; title: string }) {
 export function Projects({ items }: { items: Project[] }) {
   const { locale, t } = useLocale();
   const [selected, setSelected] = useState<Project | null>(null);
+  const [imgIndex, setImgIndex] = useState(0);
 
   if (items.length === 0) return null;
+
+  const selectedImages = selected ? projectImages(selected) : [];
 
   const selectedTitle = selected
     ? pickByLocale(locale, {
@@ -76,16 +86,26 @@ export function Projects({ items }: { items: Project[] }) {
             ar: project.title_ar,
             jv: project.title_jv,
           });
+          const images = projectImages(project);
 
           return (
             <FadeIn key={project.id} delay={(i % 3) * 0.06}>
               <button
                 type="button"
-                onClick={() => setSelected(project)}
+                onClick={() => {
+                  setSelected(project);
+                  setImgIndex(0);
+                }}
                 className="group w-full cursor-pointer overflow-hidden rounded-lg border border-border bg-card text-left transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
               >
                 <div className="relative overflow-hidden">
-                  <Thumbnail project={project} title={title} />
+                  <Thumbnail cover={images[0]} title={title} />
+                  {images.length > 1 && (
+                    <span className="absolute top-3 left-3 flex items-center gap-1 rounded-full border border-border bg-background/70 px-2 py-0.5 font-mono text-[0.65rem] text-foreground/80 backdrop-blur-sm">
+                      <Images className="size-3" />
+                      {images.length}
+                    </span>
+                  )}
                   <span className="absolute top-3 right-3 flex size-7 items-center justify-center rounded-full border border-border bg-background/70 opacity-0 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-100">
                     <ArrowUpRight className="size-3.5" />
                   </span>
@@ -110,13 +130,36 @@ export function Projects({ items }: { items: Project[] }) {
         <DialogContent className="max-h-[90dvh] gap-0 overflow-y-auto p-0 sm:max-w-xl">
           {selected && (
             <>
-              {selected.image_url && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={selected.image_url}
-                  alt={selectedTitle}
-                  className="aspect-video w-full object-cover"
-                />
+              {selectedImages.length > 0 && (
+                <div>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={selectedImages[imgIndex] ?? selectedImages[0]}
+                    alt={selectedTitle}
+                    className="aspect-video w-full object-cover"
+                  />
+                  {selectedImages.length > 1 && (
+                    <div className="flex gap-2 overflow-x-auto px-6 pt-3">
+                      {selectedImages.map((img, idx) => (
+                        <button
+                          key={img + idx}
+                          type="button"
+                          onClick={() => setImgIndex(idx)}
+                          aria-label={`Gambar ${idx + 1}`}
+                          className={cn(
+                            "aspect-video h-12 shrink-0 overflow-hidden rounded-md border transition-all",
+                            idx === imgIndex
+                              ? "border-primary opacity-100"
+                              : "border-border opacity-60 hover:opacity-100"
+                          )}
+                        >
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={img} alt="" className="h-full w-full object-cover" />
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               )}
               <div className="flex flex-col gap-4 p-6">
                 <DialogHeader>

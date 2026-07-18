@@ -2,8 +2,10 @@
 
 import { useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
+import { Star, X } from "lucide-react";
 import { createProject, updateProject } from "./actions";
 import { deleteImage, uploadImage } from "../upload-action";
+import { compressImage } from "@/lib/compress-image";
 import type { Project } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,34 +31,70 @@ export function ProjectFormDialog({
 }) {
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
-  const [imagePreview, setImagePreview] = useState(project?.image_url ?? "");
-  const [imageUrl, setImageUrl] = useState(project?.image_url ?? "");
-  const imageFileRef = useRef<HTMLInputElement>(null);
   const isEdit = Boolean(project);
 
-  function handleRemoveImage() {
-    setImagePreview("");
-    setImageUrl("");
-    if (imageFileRef.current) imageFileRef.current.value = "";
+  // Daftar gambar galeri: bisa berupa URL yang sudah tersimpan atau File baru.
+  const keyCounter = useRef(0);
+  const initialImages =
+    project?.image_urls && project.image_urls.length > 0
+      ? project.image_urls
+      : project?.image_url
+        ? [project.image_url]
+        : [];
+  const [items, setItems] = useState<
+    { key: string; url?: string; file?: File; preview: string }[]
+  >(() => initialImages.map((u, idx) => ({ key: `init-${idx}-${u}`, url: u, preview: u })));
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  function addFiles(files: FileList | null) {
+    if (!files || files.length === 0) return;
+    const added = Array.from(files).map((file) => ({
+      key: `i${keyCounter.current++}`,
+      file,
+      preview: URL.createObjectURL(file),
+    }));
+    setItems((prev) => [...prev, ...added]);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }
+
+  function removeItem(key: string) {
+    setItems((prev) => prev.filter((it) => it.key !== key));
+  }
+
+  // Pindahkan gambar ke posisi pertama (jadi sampul).
+  function makeCover(key: string) {
+    setItems((prev) => {
+      const idx = prev.findIndex((it) => it.key === key);
+      if (idx <= 0) return prev;
+      const copy = [...prev];
+      const [moved] = copy.splice(idx, 1);
+      copy.unshift(moved);
+      return copy;
+    });
   }
 
   function handleSubmit(formData: FormData) {
     startTransition(async () => {
-      const previousUrl = project?.image_url ?? "";
-      let finalUrl = imageUrl;
-
-      const file = formData.get("image_file");
-      if (file instanceof File && file.size > 0) {
-        const uploadForm = new FormData();
-        uploadForm.set("file", file);
-        const uploadResult = await uploadImage(uploadForm);
-        if (uploadResult.error) {
-          toast.error(uploadResult.error);
-          return;
+      // Upload semua file baru, susun URL final sesuai urutan.
+      const finalUrls: string[] = [];
+      for (const it of items) {
+        if (it.url) {
+          finalUrls.push(it.url);
+          continue;
         }
-        finalUrl = uploadResult.url!;
+        if (it.file) {
+          const compressed = await compressImage(it.file);
+          const uploadForm = new FormData();
+          uploadForm.set("file", compressed);
+          const uploadResult = await uploadImage(uploadForm);
+          if (uploadResult.error) {
+            toast.error(uploadResult.error);
+            return;
+          }
+          finalUrls.push(uploadResult.url!);
+        }
       }
-      formData.set("image_url", finalUrl);
+      formData.set("image_urls", JSON.stringify(finalUrls));
 
       const action = isEdit ? updateProject : createProject;
       const result = await action(formData);
@@ -65,15 +103,19 @@ export function ProjectFormDialog({
         return;
       }
 
-      // Sync local state to what was just saved so re-editing this project
-      // (e.g. changing only the title) doesn't submit a stale image URL.
-      setImageUrl(finalUrl);
-      setImagePreview(finalUrl);
-      if (imageFileRef.current) imageFileRef.current.value = "";
-
-      if (previousUrl && previousUrl !== finalUrl) {
-        deleteImage(previousUrl);
+      // Hapus gambar lama yang sudah tidak dipakai lagi.
+      const prevUrls =
+        project?.image_urls && project.image_urls.length > 0
+          ? project.image_urls
+          : project?.image_url
+            ? [project.image_url]
+            : [];
+      for (const old of prevUrls) {
+        if (old && !finalUrls.includes(old)) deleteImage(old);
       }
+
+      // Sinkronkan state ke hasil tersimpan.
+      setItems(finalUrls.map((u) => ({ key: `i${keyCounter.current++}`, url: u, preview: u })));
       toast.success(isEdit ? "Project diperbarui" : "Project ditambahkan");
       setOpen(false);
     });
@@ -147,33 +189,59 @@ export function ProjectFormDialog({
             </TabsContent>
           </Tabs>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="image_file">Gambar Project</Label>
-            {imagePreview && (
-              <div className="space-y-2">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={imagePreview}
-                  alt="Preview gambar project"
-                  className="h-32 w-full rounded-lg object-cover"
-                />
-                <Button type="button" variant="outline" size="sm" onClick={handleRemoveImage}>
-                  Hapus Gambar
-                </Button>
+          <div className="space-y-2">
+            <Label htmlFor="image_file">Gambar Project (bisa lebih dari satu)</Label>
+            {items.length > 0 && (
+              <div className="grid grid-cols-3 gap-2">
+                {items.map((it, i) => (
+                  <div
+                    key={it.key}
+                    className="group/img relative aspect-video overflow-hidden rounded-lg border border-border"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={it.preview} alt="" className="h-full w-full object-cover" />
+                    {i === 0 && (
+                      <span className="absolute top-1 left-1 rounded bg-primary px-1.5 py-0.5 text-[0.6rem] font-medium text-primary-foreground">
+                        Sampul
+                      </span>
+                    )}
+                    <div className="absolute inset-x-1 bottom-1 flex justify-end gap-1 opacity-0 transition-opacity group-hover/img:opacity-100">
+                      {i !== 0 && (
+                        <Button
+                          type="button"
+                          size="icon-xs"
+                          variant="secondary"
+                          aria-label="Jadikan sampul"
+                          onClick={() => makeCover(it.key)}
+                        >
+                          <Star />
+                        </Button>
+                      )}
+                      <Button
+                        type="button"
+                        size="icon-xs"
+                        variant="destructive"
+                        aria-label="Hapus gambar"
+                        onClick={() => removeItem(it.key)}
+                      >
+                        <X />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
-            <input type="hidden" name="image_url" value={imageUrl} readOnly />
             <Input
-              ref={imageFileRef}
+              ref={fileInputRef}
               id="image_file"
-              name="image_file"
               type="file"
               accept="image/*"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) setImagePreview(URL.createObjectURL(file));
-              }}
+              multiple
+              onChange={(e) => addFiles(e.target.files)}
             />
+            <p className="text-xs text-muted-foreground">
+              Bisa pilih beberapa sekaligus. Gambar pertama jadi sampul (klik ★ untuk mengubah).
+            </p>
           </div>
 
           <div className="space-y-1.5">

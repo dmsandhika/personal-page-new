@@ -5,6 +5,18 @@ import { supabaseAdmin } from "@/lib/supabase/admin";
 
 function projectFromForm(formData: FormData) {
   const tagsRaw = String(formData.get("tags") ?? "");
+
+  // Galeri gambar dikirim sebagai JSON array URL. Gambar pertama = sampul.
+  let imageUrls: string[] = [];
+  try {
+    const parsed = JSON.parse(String(formData.get("image_urls") ?? "[]"));
+    if (Array.isArray(parsed)) {
+      imageUrls = parsed.filter((u): u is string => typeof u === "string" && u.length > 0);
+    }
+  } catch {
+    imageUrls = [];
+  }
+
   return {
     title: String(formData.get("title") ?? ""),
     title_en: String(formData.get("title_en") ?? "") || null,
@@ -14,7 +26,8 @@ function projectFromForm(formData: FormData) {
     description_en: String(formData.get("description_en") ?? "") || null,
     description_ar: String(formData.get("description_ar") ?? "") || null,
     description_jv: String(formData.get("description_jv") ?? "") || null,
-    image_url: String(formData.get("image_url") ?? "") || null,
+    image_urls: imageUrls,
+    image_url: imageUrls[0] ?? null,
     tags: tagsRaw
       .split(",")
       .map((t) => t.trim())

@@ -77,6 +77,8 @@ export function ExperienceFormDialog({
                 <SelectContent>
                   <SelectItem value="work">Kerja</SelectItem>
                   <SelectItem value="intern">Magang</SelectItem>
+                  <SelectItem value="campus">Program Kampus</SelectItem>
+                  <SelectItem value="freelance">Freelance</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -150,14 +152,19 @@ export function ExperienceFormDialog({
               <Input
                 id="start_date"
                 name="start_date"
-                type="date"
-                defaultValue={experience?.start_date}
+                type="month"
+                defaultValue={experience?.start_date?.slice(0, 7)}
                 required
               />
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="end_date">Selesai (kosongkan jika masih berjalan)</Label>
-              <Input id="end_date" name="end_date" type="date" defaultValue={experience?.end_date ?? ""} />
+              <Input
+                id="end_date"
+                name="end_date"
+                type="month"
+                defaultValue={experience?.end_date?.slice(0, 7) ?? ""}
+              />
             </div>
           </div>
 

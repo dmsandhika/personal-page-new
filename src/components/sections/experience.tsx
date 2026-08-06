@@ -6,6 +6,13 @@ import { SectionHeading } from "@/components/section-heading";
 import { useLocale } from "@/lib/i18n/locale-context";
 import { pickByLocale, type Locale } from "@/lib/i18n/dictionaries";
 
+const EMPLOYMENT_TYPE_KEYS = {
+  work: "experience.work",
+  intern: "experience.intern",
+  campus: "experience.campus",
+  freelance: "experience.freelance",
+} as const;
+
 function formatPeriod(start: string, end: string | null, locale: Locale, presentLabel: string) {
   const format = (d: string) =>
     new Date(d).toLocaleDateString(locale === "en" ? "en-US" : "id-ID", {
@@ -50,7 +57,10 @@ export function Experience({ items }: { items: ExperienceItem[] }) {
                     {formatPeriod(item.start_date, item.end_date, locale, t("experience.present"))}
                   </p>
                   <span className="rounded-full border border-primary/40 px-2 py-0.5 font-mono text-[0.6rem] tracking-wider text-primary uppercase">
-                    {t(item.employment_type === "intern" ? "experience.intern" : "experience.work")}
+                    {t(
+                      EMPLOYMENT_TYPE_KEYS[item.employment_type as keyof typeof EMPLOYMENT_TYPE_KEYS] ??
+                        EMPLOYMENT_TYPE_KEYS.work
+                    )}
                   </span>
                 </div>
                 <h3 className="mt-2 font-display text-xl font-semibold tracking-tight">{role}</h3>

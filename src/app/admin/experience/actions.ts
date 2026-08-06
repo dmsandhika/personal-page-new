@@ -3,7 +3,12 @@
 import { revalidatePath } from "next/cache";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
+function toMonthStart(value: string) {
+  return /^\d{4}-\d{2}$/.test(value) ? `${value}-01` : value;
+}
+
 function experienceFromForm(formData: FormData) {
+  const endDate = String(formData.get("end_date") ?? "");
   return {
     role: String(formData.get("role") ?? ""),
     role_en: String(formData.get("role_en") ?? "") || null,
@@ -12,8 +17,8 @@ function experienceFromForm(formData: FormData) {
     employment_type: String(formData.get("employment_type") ?? "work") || "work",
     company: String(formData.get("company") ?? ""),
     location: String(formData.get("location") ?? "") || null,
-    start_date: String(formData.get("start_date") ?? ""),
-    end_date: String(formData.get("end_date") ?? "") || null,
+    start_date: toMonthStart(String(formData.get("start_date") ?? "")),
+    end_date: endDate ? toMonthStart(endDate) : null,
     description: String(formData.get("description") ?? "") || null,
     description_en: String(formData.get("description_en") ?? "") || null,
     description_ar: String(formData.get("description_ar") ?? "") || null,

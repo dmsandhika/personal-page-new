@@ -16,6 +16,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+function formatMonthYear(date: string) {
+  return new Date(`${date}T00:00:00`).toLocaleDateString("id-ID", {
+    month: "short",
+    year: "numeric",
+  });
+}
+
 export function ExperienceList({ items }: { items: Experience[] }) {
   const [isPending, startTransition] = useTransition();
 
@@ -48,7 +55,7 @@ export function ExperienceList({ items }: { items: Experience[] }) {
             <TableCell className="font-medium">{item.role}</TableCell>
             <TableCell>{item.company}</TableCell>
             <TableCell>
-              {item.start_date} – {item.end_date ?? "Sekarang"}
+              {formatMonthYear(item.start_date)} – {item.end_date ? formatMonthYear(item.end_date) : "Sekarang"}
             </TableCell>
             <TableCell className="flex justify-end gap-2">
               <ExperienceFormDialog

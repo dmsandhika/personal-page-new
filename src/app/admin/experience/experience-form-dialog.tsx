@@ -85,7 +85,7 @@ export function ExperienceFormDialog({
           </div>
 
           <div className="flex justify-end">
-            <TranslateButton sources={["role", "description"]} />
+            <TranslateButton sources={["role", "description", "location"]} />
           </div>
 
           <Tabs defaultValue="id">
@@ -102,6 +102,10 @@ export function ExperienceFormDialog({
                 <Input id="role" name="role" defaultValue={experience?.role} required />
               </div>
               <div className="space-y-1.5">
+                <Label htmlFor="location">Lokasi</Label>
+                <Input id="location" name="location" defaultValue={experience?.location ?? ""} />
+              </div>
+              <div className="space-y-1.5">
                 <Label htmlFor="description">Deskripsi</Label>
                 <Textarea id="description" name="description" rows={4} defaultValue={experience?.description ?? ""} />
               </div>
@@ -111,6 +115,10 @@ export function ExperienceFormDialog({
               <div className="space-y-1.5">
                 <Label htmlFor="role_en">Role (English)</Label>
                 <Input id="role_en" name="role_en" defaultValue={experience?.role_en ?? ""} />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="location_en">Location (English)</Label>
+                <Input id="location_en" name="location_en" defaultValue={experience?.location_en ?? ""} />
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="description_en">Description (English)</Label>
@@ -124,6 +132,10 @@ export function ExperienceFormDialog({
                 <Input id="role_ar" name="role_ar" dir="rtl" lang="ar" defaultValue={experience?.role_ar ?? ""} />
               </div>
               <div className="space-y-1.5">
+                <Label htmlFor="location_ar">Lokasi (Arab)</Label>
+                <Input id="location_ar" name="location_ar" dir="rtl" lang="ar" defaultValue={experience?.location_ar ?? ""} />
+              </div>
+              <div className="space-y-1.5">
                 <Label htmlFor="description_ar">Description (Arab)</Label>
                 <Textarea id="description_ar" name="description_ar" rows={4} dir="rtl" lang="ar" defaultValue={experience?.description_ar ?? ""} />
               </div>
@@ -135,16 +147,15 @@ export function ExperienceFormDialog({
                 <Input id="role_jv" name="role_jv" defaultValue={experience?.role_jv ?? ""} />
               </div>
               <div className="space-y-1.5">
+                <Label htmlFor="location_jv">Lokasi (Jawa)</Label>
+                <Input id="location_jv" name="location_jv" defaultValue={experience?.location_jv ?? ""} />
+              </div>
+              <div className="space-y-1.5">
                 <Label htmlFor="description_jv">Description (Jawa)</Label>
                 <Textarea id="description_jv" name="description_jv" rows={4} defaultValue={experience?.description_jv ?? ""} />
               </div>
             </TabsContent>
           </Tabs>
-
-          <div className="space-y-1.5">
-            <Label htmlFor="location">Lokasi</Label>
-            <Input id="location" name="location" defaultValue={experience?.location ?? ""} />
-          </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">

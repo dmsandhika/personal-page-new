@@ -74,7 +74,7 @@ export function Projects({ items }: { items: Project[] }) {
   return (
     <section id="projects" className="mx-auto max-w-6xl px-6 py-28 sm:px-10">
       <FadeIn>
-        <SectionHeading number="03">{t("section.projects")}</SectionHeading>
+        <SectionHeading number="04">{t("section.projects")}</SectionHeading>
       </FadeIn>
 
       {/* Galeri grid: kartu ringkas, klik untuk detail */}

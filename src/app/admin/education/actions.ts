@@ -7,15 +7,19 @@ function toMonthStart(value: string) {
   return /^\d{4}-\d{2}$/.test(value) ? `${value}-01` : value;
 }
 
-function experienceFromForm(formData: FormData) {
+function educationFromForm(formData: FormData) {
   const endDate = String(formData.get("end_date") ?? "");
   return {
-    role: String(formData.get("role") ?? ""),
-    role_en: String(formData.get("role_en") ?? "") || null,
-    role_ar: String(formData.get("role_ar") ?? "") || null,
-    role_jv: String(formData.get("role_jv") ?? "") || null,
-    employment_type: String(formData.get("employment_type") ?? "work") || "work",
-    company: String(formData.get("company") ?? ""),
+    institution: String(formData.get("institution") ?? ""),
+    institution_en: String(formData.get("institution_en") ?? "") || null,
+    institution_ar: String(formData.get("institution_ar") ?? "") || null,
+    institution_jv: String(formData.get("institution_jv") ?? "") || null,
+    institution_logo_url: String(formData.get("institution_logo_url") ?? "") || null,
+    degree: String(formData.get("degree") ?? "S1") || "S1",
+    field_of_study: String(formData.get("field_of_study") ?? ""),
+    field_of_study_en: String(formData.get("field_of_study_en") ?? "") || null,
+    field_of_study_ar: String(formData.get("field_of_study_ar") ?? "") || null,
+    field_of_study_jv: String(formData.get("field_of_study_jv") ?? "") || null,
     location: String(formData.get("location") ?? "") || null,
     location_en: String(formData.get("location_en") ?? "") || null,
     location_ar: String(formData.get("location_ar") ?? "") || null,
@@ -31,7 +35,7 @@ function experienceFromForm(formData: FormData) {
 
 async function nextSortOrder() {
   const { data } = await supabaseAdmin
-    .from("experience")
+    .from("education")
     .select("sort_order")
     .order("sort_order", { ascending: false })
     .limit(1)
@@ -39,47 +43,47 @@ async function nextSortOrder() {
   return (data?.sort_order ?? -1) + 1;
 }
 
-export async function createExperience(formData: FormData) {
+export async function createEducation(formData: FormData) {
   const { error } = await supabaseAdmin
-    .from("experience")
-    .insert({ ...experienceFromForm(formData), sort_order: await nextSortOrder() });
+    .from("education")
+    .insert({ ...educationFromForm(formData), sort_order: await nextSortOrder() });
 
   if (error) return { error: error.message };
   revalidatePath("/");
-  revalidatePath("/admin/experience");
+  revalidatePath("/admin/education");
   return { success: true };
 }
 
-export async function updateExperience(formData: FormData) {
+export async function updateEducation(formData: FormData) {
   const id = String(formData.get("id"));
   const { error } = await supabaseAdmin
-    .from("experience")
-    .update(experienceFromForm(formData))
+    .from("education")
+    .update(educationFromForm(formData))
     .eq("id", id);
 
   if (error) return { error: error.message };
   revalidatePath("/");
-  revalidatePath("/admin/experience");
+  revalidatePath("/admin/education");
   return { success: true };
 }
 
-export async function deleteExperience(id: string) {
-  const { error } = await supabaseAdmin.from("experience").delete().eq("id", id);
+export async function deleteEducation(id: string) {
+  const { error } = await supabaseAdmin.from("education").delete().eq("id", id);
   if (error) return { error: error.message };
   revalidatePath("/");
-  revalidatePath("/admin/experience");
+  revalidatePath("/admin/education");
   return { success: true };
 }
 
-export async function reorderExperience(orderedIds: string[]) {
+export async function reorderEducation(orderedIds: string[]) {
   const results = await Promise.all(
     orderedIds.map((id, index) =>
-      supabaseAdmin.from("experience").update({ sort_order: index }).eq("id", id)
+      supabaseAdmin.from("education").update({ sort_order: index }).eq("id", id)
     )
   );
   const failed = results.find((result) => result.error);
   if (failed?.error) return { error: failed.error.message };
   revalidatePath("/");
-  revalidatePath("/admin/experience");
+  revalidatePath("/admin/education");
   return { success: true };
 }

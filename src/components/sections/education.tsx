@@ -1,17 +1,10 @@
 "use client";
 
-import type { Experience as ExperienceItem } from "@/lib/types";
+import type { Education as EducationItem } from "@/lib/types";
 import { FadeIn } from "@/components/motion/fade-in";
 import { SectionHeading } from "@/components/section-heading";
 import { useLocale } from "@/lib/i18n/locale-context";
 import { pickByLocale, type Locale } from "@/lib/i18n/dictionaries";
-
-const EMPLOYMENT_TYPE_KEYS = {
-  work: "experience.work",
-  intern: "experience.intern",
-  campus: "experience.campus",
-  freelance: "experience.freelance",
-} as const;
 
 function formatPeriod(start: string, end: string | null, locale: Locale, presentLabel: string) {
   const format = (d: string) =>
@@ -22,25 +15,31 @@ function formatPeriod(start: string, end: string | null, locale: Locale, present
   return `${format(start)} — ${end ? format(end) : presentLabel}`;
 }
 
-export function Experience({ items }: { items: ExperienceItem[] }) {
+export function Education({ items }: { items: EducationItem[] }) {
   const { locale, t } = useLocale();
 
   if (items.length === 0) return null;
 
   return (
-    <section id="experience" className="mx-auto max-w-3xl px-6 py-28 sm:px-10">
+    <section id="education" className="mx-auto max-w-3xl px-6 py-28 sm:px-10">
       <FadeIn>
-        <SectionHeading number="03">{t("section.experience")}</SectionHeading>
+        <SectionHeading number="02">{t("section.education")}</SectionHeading>
       </FadeIn>
 
       <div className="relative space-y-12">
         <div className="absolute inset-y-0 inset-s-0 w-px bg-border" aria-hidden="true" />
         {items.map((item, i) => {
-          const role = pickByLocale(locale, {
-            id: item.role,
-            en: item.role_en,
-            ar: item.role_ar,
-            jv: item.role_jv,
+          const institution = pickByLocale(locale, {
+            id: item.institution,
+            en: item.institution_en,
+            ar: item.institution_ar,
+            jv: item.institution_jv,
+          });
+          const fieldOfStudy = pickByLocale(locale, {
+            id: item.field_of_study,
+            en: item.field_of_study_en,
+            ar: item.field_of_study_ar,
+            jv: item.field_of_study_jv,
           });
           const description = pickByLocale(locale, {
             id: item.description ?? "",
@@ -66,17 +65,26 @@ export function Experience({ items }: { items: ExperienceItem[] }) {
                     {formatPeriod(item.start_date, item.end_date, locale, t("experience.present"))}
                   </p>
                   <span className="rounded-full border border-primary/40 px-2 py-0.5 font-mono text-[0.6rem] tracking-wider text-primary uppercase">
-                    {t(
-                      EMPLOYMENT_TYPE_KEYS[item.employment_type as keyof typeof EMPLOYMENT_TYPE_KEYS] ??
-                        EMPLOYMENT_TYPE_KEYS.work
-                    )}
+                    {item.degree}
                   </span>
                 </div>
-                <h3 className="mt-2 font-display text-xl font-semibold tracking-tight">{role}</h3>
-                <p className="mt-0.5 text-sm text-primary">
-                  {item.company}
-                  {location ? <span className="text-muted-foreground"> · {location}</span> : null}
-                </p>
+                <div className="mt-2 flex items-start gap-3">
+                  {item.institution_logo_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={item.institution_logo_url}
+                      alt={institution}
+                      className="mt-0.5 size-10 shrink-0 rounded-lg border border-border bg-background object-contain p-1"
+                    />
+                  ) : null}
+                  <div>
+                    <h3 className="font-display text-xl font-semibold tracking-tight">{fieldOfStudy}</h3>
+                    <p className="mt-0.5 text-sm text-primary">
+                      {institution}
+                      {location ? <span className="text-muted-foreground"> · {location}</span> : null}
+                    </p>
+                  </div>
+                </div>
                 {description && (
                   <p className="mt-4 leading-relaxed whitespace-pre-line text-foreground/80">
                     {description}

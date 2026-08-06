@@ -52,6 +52,35 @@ export type Experience = {
   employment_type: string;
   company: string;
   location: string | null;
+  location_en: string | null;
+  location_ar: string | null;
+  location_jv: string | null;
+  start_date: string;
+  end_date: string | null;
+  description: string | null;
+  description_en: string | null;
+  description_ar: string | null;
+  description_jv: string | null;
+  sort_order: number;
+  created_at: string;
+};
+
+export type Education = {
+  id: string;
+  institution: string;
+  institution_en: string | null;
+  institution_ar: string | null;
+  institution_jv: string | null;
+  institution_logo_url: string | null;
+  degree: string;
+  field_of_study: string;
+  field_of_study_en: string | null;
+  field_of_study_ar: string | null;
+  field_of_study_jv: string | null;
+  location: string | null;
+  location_en: string | null;
+  location_ar: string | null;
+  location_jv: string | null;
   start_date: string;
   end_date: string | null;
   description: string | null;

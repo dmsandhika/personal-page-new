@@ -4,6 +4,7 @@ import { getProfile, siteUrl } from "@/lib/site";
 import { Hero } from "@/components/sections/hero";
 import { TechMarquee } from "@/components/tech-marquee";
 import { About } from "@/components/sections/about";
+import { Education } from "@/components/sections/education";
 import { Experience } from "@/components/sections/experience";
 import { Projects } from "@/components/sections/projects";
 import { Contact } from "@/components/sections/contact";
@@ -44,9 +45,13 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Home() {
-  const [profile, { data: experience }, { data: projects }] =
+  const [profile, { data: education }, { data: experience }, { data: projects }] =
     await Promise.all([
       getProfile(),
+      supabasePublic
+        .from("education")
+        .select("*")
+        .order("sort_order", { ascending: true }),
       supabasePublic
         .from("experience")
         .select("*")
@@ -95,6 +100,7 @@ export default async function Home() {
       <Hero profile={profile} />
       <TechMarquee />
       <About profile={profile} />
+      <Education items={education ?? []} />
       <Experience items={experience ?? []} />
       <Projects items={projects ?? []} />
       <Contact profile={profile} />

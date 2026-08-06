@@ -5,6 +5,7 @@ export const locales: Locale[] = ["id", "en", "ar", "jv"];
 export const dictionaries = {
   id: {
     "section.about": "Tentang",
+    "section.education": "Pendidikan",
     "section.experience": "Pengalaman",
     "section.projects": "Proyek",
     "section.contact": "Kontak",
@@ -21,6 +22,7 @@ export const dictionaries = {
   },
   en: {
     "section.about": "About",
+    "section.education": "Education",
     "section.experience": "Experience",
     "section.projects": "Projects",
     "section.contact": "Contact",
@@ -37,6 +39,7 @@ export const dictionaries = {
   },
   ar: {
     "section.about": "نبذة",
+    "section.education": "التعليم",
     "section.experience": "الخبرة",
     "section.projects": "المشاريع",
     "section.contact": "تواصل",
@@ -54,6 +57,7 @@ export const dictionaries = {
   // Jawa ngoko (santai)
   jv: {
     "section.about": "Ngenani",
+    "section.education": "Pendhidhikan",
     "section.experience": "Pengalaman",
     "section.projects": "Proyek",
     "section.contact": "Kontak",

@@ -20,9 +20,9 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { deleteExperience, reorderExperience } from "./actions";
-import { ExperienceFormDialog } from "./experience-form-dialog";
-import type { Experience } from "@/lib/types";
+import { deleteEducation, reorderEducation } from "./actions";
+import { EducationFormDialog } from "./education-form-dialog";
+import type { Education } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -45,7 +45,7 @@ function SortableRow({
   isPending,
   onDelete,
 }: {
-  item: Experience;
+  item: Education;
   isPending: boolean;
   onDelete: (id: string) => void;
 }) {
@@ -70,14 +70,26 @@ function SortableRow({
           <GripVertical className="size-4 cursor-grab" />
         </button>
       </TableCell>
-      <TableCell className="font-medium">{item.role}</TableCell>
-      <TableCell>{item.company}</TableCell>
+      <TableCell>
+        {item.institution_logo_url ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={item.institution_logo_url}
+            alt={item.institution}
+            className="size-8 rounded object-contain"
+          />
+        ) : null}
+      </TableCell>
+      <TableCell className="font-medium">{item.institution}</TableCell>
+      <TableCell>
+        {item.degree} · {item.field_of_study}
+      </TableCell>
       <TableCell>
         {formatMonthYear(item.start_date)} – {item.end_date ? formatMonthYear(item.end_date) : "Sekarang"}
       </TableCell>
       <TableCell className="flex justify-end gap-2">
-        <ExperienceFormDialog
-          experience={item}
+        <EducationFormDialog
+          education={item}
           trigger={
             <Button variant="ghost" size="icon">
               <Pencil className="size-4" />
@@ -92,7 +104,7 @@ function SortableRow({
   );
 }
 
-export function ExperienceList({ items: initialItems }: { items: Experience[] }) {
+export function EducationList({ items: initialItems }: { items: Education[] }) {
   const [items, setItems] = useState(initialItems);
   const [prevInitialItems, setPrevInitialItems] = useState(initialItems);
   const [isPending, startTransition] = useTransition();
@@ -107,11 +119,11 @@ export function ExperienceList({ items: initialItems }: { items: Experience[] })
   }
 
   function handleDelete(id: string) {
-    if (!confirm("Hapus experience ini?")) return;
+    if (!confirm("Hapus data pendidikan ini?")) return;
     startTransition(async () => {
-      const result = await deleteExperience(id);
+      const result = await deleteEducation(id);
       if (result?.error) toast.error(result.error);
-      else toast.success("Experience dihapus");
+      else toast.success("Pendidikan dihapus");
     });
   }
 
@@ -125,7 +137,7 @@ export function ExperienceList({ items: initialItems }: { items: Experience[] })
     setItems(reordered);
 
     startTransition(async () => {
-      const result = await reorderExperience(reordered.map((item) => item.id));
+      const result = await reorderEducation(reordered.map((item) => item.id));
       if (result?.error) {
         toast.error(result.error);
         setItems(initialItems);
@@ -134,7 +146,7 @@ export function ExperienceList({ items: initialItems }: { items: Experience[] })
   }
 
   if (items.length === 0) {
-    return <p className="text-sm text-muted-foreground">Belum ada data experience.</p>;
+    return <p className="text-sm text-muted-foreground">Belum ada data pendidikan.</p>;
   }
 
   return (
@@ -143,8 +155,9 @@ export function ExperienceList({ items: initialItems }: { items: Experience[] })
         <TableHeader>
           <TableRow>
             <TableHead className="w-8" />
-            <TableHead>Role</TableHead>
-            <TableHead>Perusahaan</TableHead>
+            <TableHead className="w-10" />
+            <TableHead>Institusi</TableHead>
+            <TableHead>Jenjang / Jurusan</TableHead>
             <TableHead>Periode</TableHead>
             <TableHead className="text-right">Aksi</TableHead>
           </TableRow>

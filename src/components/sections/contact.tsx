@@ -20,7 +20,7 @@ export function Contact({ profile }: { profile: Profile }) {
   return (
     <section id="contact" className="mx-auto max-w-3xl px-6 py-32 text-center sm:px-10">
       <FadeIn>
-        <SectionHeading number="04" align="center">
+        <SectionHeading number="05" align="center">
           {t("section.contact")}
         </SectionHeading>
         <p className="mx-auto mb-10 max-w-md text-xl leading-snug text-muted-foreground sm:text-2xl">

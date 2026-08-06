@@ -23,14 +23,23 @@ function experienceFromForm(formData: FormData) {
     description_en: String(formData.get("description_en") ?? "") || null,
     description_ar: String(formData.get("description_ar") ?? "") || null,
     description_jv: String(formData.get("description_jv") ?? "") || null,
-    sort_order: Number(formData.get("sort_order") ?? 0),
   };
+}
+
+async function nextSortOrder() {
+  const { data } = await supabaseAdmin
+    .from("experience")
+    .select("sort_order")
+    .order("sort_order", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  return (data?.sort_order ?? -1) + 1;
 }
 
 export async function createExperience(formData: FormData) {
   const { error } = await supabaseAdmin
     .from("experience")
-    .insert(experienceFromForm(formData));
+    .insert({ ...experienceFromForm(formData), sort_order: await nextSortOrder() });
 
   if (error) return { error: error.message };
   revalidatePath("/");
@@ -54,6 +63,19 @@ export async function updateExperience(formData: FormData) {
 export async function deleteExperience(id: string) {
   const { error } = await supabaseAdmin.from("experience").delete().eq("id", id);
   if (error) return { error: error.message };
+  revalidatePath("/");
+  revalidatePath("/admin/experience");
+  return { success: true };
+}
+
+export async function reorderExperience(orderedIds: string[]) {
+  const results = await Promise.all(
+    orderedIds.map((id, index) =>
+      supabaseAdmin.from("experience").update({ sort_order: index }).eq("id", id)
+    )
+  );
+  const failed = results.find((result) => result.error);
+  if (failed?.error) return { error: failed.error.message };
   revalidatePath("/");
   revalidatePath("/admin/experience");
   return { success: true };

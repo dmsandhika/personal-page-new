@@ -33,7 +33,8 @@ export function Experience({ items }: { items: ExperienceItem[] }) {
         <SectionHeading number="02">{t("section.experience")}</SectionHeading>
       </FadeIn>
 
-      <div className="space-y-12">
+      <div className="relative space-y-12">
+        <div className="absolute inset-y-0 inset-s-0 w-px bg-border" aria-hidden="true" />
         {items.map((item, i) => {
           const role = pickByLocale(locale, {
             id: item.role,
@@ -50,7 +51,7 @@ export function Experience({ items }: { items: ExperienceItem[] }) {
 
           return (
             <FadeIn key={item.id} delay={i * 0.05}>
-              <div className="group relative border-s border-border ps-8 transition-colors hover:border-primary/60">
+              <div className="group relative ps-8">
                 <span className="absolute -inset-s-1.25 top-2 size-2.5 rounded-full bg-border ring-4 ring-background transition-colors group-hover:bg-primary" />
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
                   <p className="font-mono text-xs tracking-wider text-muted-foreground">

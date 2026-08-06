@@ -168,16 +168,6 @@ export function ExperienceFormDialog({
             </div>
           </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="sort_order">Urutan (angka lebih kecil tampil duluan)</Label>
-            <Input
-              id="sort_order"
-              name="sort_order"
-              type="number"
-              defaultValue={experience?.sort_order ?? 0}
-            />
-          </div>
-
           <Button type="submit" disabled={isPending} className="w-full">
             {isPending ? "Menyimpan..." : "Simpan"}
           </Button>

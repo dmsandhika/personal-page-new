@@ -16,6 +16,7 @@ function educationFromForm(formData: FormData) {
     institution_jv: String(formData.get("institution_jv") ?? "") || null,
     institution_logo_url: String(formData.get("institution_logo_url") ?? "") || null,
     degree: String(formData.get("degree") ?? "S1") || "S1",
+    gpa: String(formData.get("gpa") ?? "") || null,
     field_of_study: String(formData.get("field_of_study") ?? ""),
     field_of_study_en: String(formData.get("field_of_study_en") ?? "") || null,
     field_of_study_ar: String(formData.get("field_of_study_ar") ?? "") || null,

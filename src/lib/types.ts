@@ -73,6 +73,7 @@ export type Education = {
   institution_jv: string | null;
   institution_logo_url: string | null;
   degree: string;
+  gpa: string | null;
   field_of_study: string;
   field_of_study_en: string | null;
   field_of_study_ar: string | null;

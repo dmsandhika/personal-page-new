@@ -124,20 +124,26 @@ export function EducationFormDialog({
             />
           </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="degree">Jenjang</Label>
-            <Select name="degree" defaultValue={education?.degree ?? "S1"}>
-              <SelectTrigger id="degree" className="w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {DEGREES.map((degree) => (
-                  <SelectItem key={degree} value={degree}>
-                    {degree}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-1.5">
+              <Label htmlFor="degree">Jenjang</Label>
+              <Select name="degree" defaultValue={education?.degree ?? "S1"}>
+                <SelectTrigger id="degree" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {DEGREES.map((degree) => (
+                    <SelectItem key={degree} value={degree}>
+                      {degree}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="gpa">IPK (opsional)</Label>
+              <Input id="gpa" name="gpa" placeholder="3.85/4.00" defaultValue={education?.gpa ?? ""} />
+            </div>
           </div>
 
           <div className="flex justify-end">

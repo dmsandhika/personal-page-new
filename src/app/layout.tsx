@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SplashScreen } from "@/components/splash-screen";
 import { AuroraBackground } from "@/components/aurora-background";
+import { Toaster } from "@/components/ui/sonner";
 import { LocaleProvider, LOCALE_COOKIE } from "@/lib/i18n/locale-context";
 import type { Locale } from "@/lib/i18n/dictionaries";
 import { siteUrl } from "@/lib/site";
@@ -61,6 +62,7 @@ export default async function RootLayout({
           <SplashScreen />
           <AuroraBackground />
           <LocaleProvider initialLocale={initialLocale}>{children}</LocaleProvider>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

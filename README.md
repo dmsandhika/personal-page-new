@@ -40,6 +40,8 @@ Isi nilainya (dari Supabase Project Settings > API Keys):
   ```bash
   openssl rand -hex 32
   ```
+- `RESEND_API_KEY` — API key dari [resend.com](https://resend.com) (gratis, 100 email/hari), dipakai form kontak untuk mengirim email ke `profile.email`.
+- `CONTACT_FROM_EMAIL` — alamat pengirim email form kontak. Tanpa domain terverifikasi di Resend, biarkan default `onboarding@resend.dev`.
 
 ### 3. Jalankan development server
 

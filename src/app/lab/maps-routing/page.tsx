@@ -82,17 +82,18 @@ export default function MapsRoutingPage() {
 
         {/* Experiment Header */}
         <FadeIn className="space-y-4 border-b border-border pb-8">
-          <SectionHeading number="04">MAPS & ROUTING</SectionHeading>
-
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="size-11 rounded-lg bg-primary/10 border border-primary/30 flex items-center justify-center text-primary">
+          <div className="flex items-center gap-3">
+            <div className="size-11 rounded-lg bg-primary/10 border border-primary/30 flex items-center justify-center text-primary shrink-0">
               <MapPin className="size-6" />
             </div>
             <div>
-              <span className="text-[0.65rem] font-mono font-semibold px-2.5 py-1 rounded-full uppercase border border-primary/40 bg-primary/10 text-primary">
-                ● EXPERIMENT 04 — LIVE
-              </span>
-              <h1 className="font-display text-2xl sm:text-4xl font-bold tracking-tight text-foreground mt-2">
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-xs font-bold text-primary">EXP-04</span>
+                <span className="text-[0.65rem] font-mono font-semibold px-2 py-0.5 rounded-full uppercase border border-primary/40 bg-primary/10 text-primary">
+                  ● LIVE
+                </span>
+              </div>
+              <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-foreground mt-1">
                 Maps & Routing
               </h1>
             </div>

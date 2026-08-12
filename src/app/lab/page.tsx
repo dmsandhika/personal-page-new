@@ -1,7 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { Bot, CreditCard, MapPin, MessageSquareText, ArrowRight } from "lucide-react";
+import {
+  Bot,
+  CreditCard,
+  MapPin,
+  MessageSquareText,
+  ArrowRight,
+  Database,
+  BarChart3,
+  FileText,
+  Activity,
+} from "lucide-react";
 import { SiteLogo } from "@/components/site-logo";
 import { PageControls } from "@/components/page-controls";
 import { FadeIn } from "@/components/motion/fade-in";
@@ -27,25 +37,6 @@ const EXPERIMENTS = [
     tags: ["Gemini AI", "Next.js Route Handler", "Supabase DB"],
     icon: Bot,
     href: "/lab/ai-chatbot",
-  },
-  {
-    id: "payment-playground",
-    title: {
-      id: "Payment Playground",
-      en: "Payment Playground",
-      ar: "منصة تجربة الدفع الإلكتروني",
-      jv: "Playground Pembayaran",
-    },
-    description: {
-      id: "Simulasi transaction lifecycle pembayaran lengkap dengan integrasi Payment Gateway, Webhook verification, dan Idempotency log.",
-      en: "Complete payment transaction lifecycle simulation with Payment Gateway integration, Webhook verification & Idempotency audit.",
-      ar: "محاكاة كاملة لدورة حياة معاملات الدفع مع تكامل بوابات الدفع والتحقق من الويب هوك.",
-      jv: "Simulasi alur transaksi pembayaran lengkap nganggo Payment Gateway, verifikasi Webhook, lan Log Idempotency.",
-    },
-    status: "PLANNED",
-    tags: ["Xendit / BayarCash", "Webhooks", "Signature Verification"],
-    icon: CreditCard,
-    href: "#",
   },
   {
     id: "maps-routing",
@@ -84,6 +75,101 @@ const EXPERIMENTS = [
     tags: ["Supabase Realtime", "Presence", "Postgres Listener"],
     icon: MessageSquareText,
     href: "/lab/realtime-chat",
+  },
+  {
+    id: "payment-playground",
+    title: {
+      id: "Payment Playground",
+      en: "Payment Playground",
+      ar: "منصة تجربة الدفع الإلكتروني",
+      jv: "Playground Pembayaran",
+    },
+    description: {
+      id: "Simulasi transaction lifecycle pembayaran lengkap dengan integrasi Payment Gateway, Webhook verification, dan Idempotency log.",
+      en: "Complete payment transaction lifecycle simulation with Payment Gateway integration, Webhook verification & Idempotency audit.",
+      ar: "محاكاة كاملة لدورة حياة معاملات الدفع مع تكامل بوابات الدفع والتحقق من الويب هوك.",
+      jv: "Simulasi alur transaksi pembayaran lengkap nganggo Payment Gateway, verifikasi Webhook, lan Log Idempotency.",
+    },
+    status: "PLANNED",
+    tags: ["Xendit / BayarCash", "Webhooks", "Signature Verification"],
+    icon: CreditCard,
+    href: "#",
+  },
+  {
+    id: "ai-knowledge-base",
+    title: {
+      id: "AI Knowledge Base (RAG)",
+      en: "AI Knowledge Base (RAG)",
+      ar: "قاعدة معرفة الذكاء الاصطناعي",
+      jv: "AI Knowledge Base (RAG)",
+    },
+    description: {
+      id: "Sistem Tanya-Jawab berbasis dokumen PDF/Markdown dengan Supabase pgvector embedding & Gemini Semantic Search.",
+      en: "PDF/Markdown document QA system powered by Supabase pgvector embeddings & Gemini Semantic Search.",
+      ar: "نظام إجابة الأسئلة القائم على المستندات باستخدام تضمين المتجهات والبحث الدلالي.",
+      jv: "Sistem Pitakon-Wangsulan dokumen PDF/Markdown nganggo Supabase pgvector & Gemini Semantic Search.",
+    },
+    status: "PLANNED",
+    tags: ["Supabase Vector", "pgvector", "RAG Pipeline"],
+    icon: Database,
+    href: "#",
+  },
+  {
+    id: "realtime-dashboard",
+    title: {
+      id: "Realtime Analytics Dashboard",
+      en: "Realtime Analytics Dashboard",
+      ar: "لوحة تحليلات فورية",
+      jv: "Dashboard Analitik Realtime",
+    },
+    description: {
+      id: "Dashboard metrik bisnis dan grafik statistik yang terupdate secara otomatis dan live saat data database berubah.",
+      en: "Business metrics and statistical charts dashboard that auto-updates live on database changes.",
+      ar: "لوحة مؤشرات وتحليلات بيانية تتحدث تلقائيًا عند تغيير بيانات قاعدة البيانات.",
+      jv: "Dashboard metrik lan grafik statistik sing ter-update otomatis pas data database berubah.",
+    },
+    status: "PLANNED",
+    tags: ["Supabase Realtime", "Live Metrics", "Recharts"],
+    icon: BarChart3,
+    href: "#",
+  },
+  {
+    id: "ocr-scanner",
+    title: {
+      id: "OCR Receipt Scanner",
+      en: "OCR Receipt Scanner",
+      ar: "ماسح الفواتير بالتعرف البصري",
+      jv: "OCR Receipt Scanner",
+    },
+    description: {
+      id: "Ekstraksi teks dan data terstruktur (Total, Tanggal, Toko) dari foto struk belanjaan menggunakan Gemini Vision AI.",
+      en: "Text & structured data extraction (Total, Date, Merchant) from receipt images powered by Gemini Vision AI.",
+      ar: "استخراج البيانات المنسقة من صور الفواتير باستخدام الذكاء الاصطناعي البصري.",
+      jv: "Ekstraksi teks lan data terstruktur saka foto nota belanjaan nganggo Gemini Vision AI.",
+    },
+    status: "PLANNED",
+    tags: ["Gemini Vision API", "OCR", "JSON Parser"],
+    icon: FileText,
+    href: "#",
+  },
+  {
+    id: "api-monitor",
+    title: {
+      id: "API Health Monitor",
+      en: "API Health Monitor",
+      ar: "مراقب صحة واجهات البرمجة",
+      jv: "API Health Monitor",
+    },
+    description: {
+      id: "Pemantauan status uptime HTTP endpoint dan latensi respon time secara berkala menggunakan Vercel Cron Jobs.",
+      en: "HTTP endpoint uptime status and latency response monitoring using automated Vercel Cron Jobs.",
+      ar: "مراقبة حالة تشغيل واجهات البرمجة وزمن الاستجابة دوريًا باستخدام Vercel Cron.",
+      jv: "Pemantauan status uptime HTTP endpoint lan latensi respon time nganggo Vercel Cron Jobs.",
+    },
+    status: "PLANNED",
+    tags: ["Vercel Cron", "Latency Tracker", "Status Monitor"],
+    icon: Activity,
+    href: "#",
   },
 ];
 
@@ -130,7 +216,7 @@ export default function LabHubPage() {
             const expDesc = exp.description[locale] || exp.description.id;
 
             return (
-              <FadeIn key={exp.id} delay={i * 0.08}>
+              <FadeIn key={exp.id} delay={i * 0.06}>
                 <div
                   className="group relative flex flex-col justify-between p-6 bg-card text-card-foreground border border-border hover:border-primary/50 rounded-xl transition-all duration-300 shadow-xs h-full"
                 >

@@ -80,10 +80,10 @@ const EXPERIMENTS = [
       ar: "تطبيق محادثة فورية دون الحاجة لخادم خادمي خاص عن طريق الاستفادة من Supabase Realtime.",
       jv: "Aplikasi obrolan realtime tanpa server WebSocket terpisah nganggo Supabase Realtime.",
     },
-    status: "PLANNED",
+    status: "LIVE",
     tags: ["Supabase Realtime", "Presence", "Postgres Listener"],
     icon: MessageSquareText,
-    href: "#",
+    href: "/lab/realtime-chat",
   },
 ];
 

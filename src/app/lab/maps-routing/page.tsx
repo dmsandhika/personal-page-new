@@ -1,4 +1,5 @@
-import type { Metadata } from "next";
+"use client";
+
 import Link from "next/link";
 import { ArrowLeft, MapPin, Sparkles, Code2, Database, ShieldCheck, Layers, CheckCircle2, Route } from "lucide-react";
 import { MapsInterface } from "@/components/lab/maps-interface";
@@ -6,14 +7,11 @@ import { SiteLogo } from "@/components/site-logo";
 import { PageControls } from "@/components/page-controls";
 import { FadeIn } from "@/components/motion/fade-in";
 import { SectionHeading } from "@/components/section-heading";
-
-export const metadata: Metadata = {
-  title: "Maps & Interactive Routing — Dimas Lab Experiment 04",
-  description:
-    "Eksperimen 04: Interactive route planner berbasis Leaflet, OpenStreetMap, OSRM API, dan Supabase di Dimas Lab.",
-};
+import { useLocale } from "@/lib/i18n/locale-context";
 
 export default function MapsRoutingPage() {
+  const { t } = useLocale();
+
   return (
     <main className="relative min-h-screen bg-background text-foreground py-20 px-6 sm:px-10">
       <SiteLogo />
@@ -27,7 +25,7 @@ export default function MapsRoutingPage() {
             className="inline-flex items-center gap-2 font-mono text-xs text-muted-foreground hover:text-primary transition-colors uppercase tracking-wider"
           >
             <ArrowLeft className="size-4" />
-            <span>Kembali ke Dimas Lab Hub</span>
+            <span>{t("lab.backHub")}</span>
           </Link>
         </FadeIn>
 
@@ -71,7 +69,7 @@ export default function MapsRoutingPage() {
           <div className="flex items-center justify-between">
             <h2 className="font-display text-xl font-bold text-foreground flex items-center gap-2">
               <Sparkles className="size-5 text-primary" />
-              Live Interactive Demo
+              {t("lab.liveDemo")}
             </h2>
             <span className="font-mono text-xs text-muted-foreground uppercase tracking-wider">Coba perhitungan rute jalan</span>
           </div>
@@ -84,7 +82,7 @@ export default function MapsRoutingPage() {
           <div className="space-y-2">
             <h2 className="font-display text-2xl font-bold text-foreground flex items-center gap-2.5">
               <Layers className="size-6 text-primary" />
-              Technical Overview & Architecture
+              {t("lab.techOverview")}
             </h2>
             <p className="text-muted-foreground text-sm">
               Dokumentasi arsitektur dan aspek teknis pemetaan interaktif di Next.js App Router.
@@ -94,7 +92,7 @@ export default function MapsRoutingPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Problem */}
             <div className="p-6 rounded-xl bg-card text-card-foreground border border-border space-y-3">
-              <div className="font-mono text-xs text-primary uppercase tracking-wider font-semibold">Problem</div>
+              <div className="font-mono text-xs text-primary uppercase tracking-wider font-semibold">{t("lab.problem")}</div>
               <h3 className="font-display text-lg font-semibold text-foreground">
                 Integrasi Peta Interaktif Bebas Berbayar Tanpa Dependensi Proprietary API Key
               </h3>
@@ -105,7 +103,7 @@ export default function MapsRoutingPage() {
 
             {/* Solution */}
             <div className="p-6 rounded-xl bg-card text-card-foreground border border-border space-y-3">
-              <div className="font-mono text-xs text-primary uppercase tracking-wider font-semibold">Solution</div>
+              <div className="font-mono text-xs text-primary uppercase tracking-wider font-semibold">{t("lab.solution")}</div>
               <h3 className="font-display text-lg font-semibold text-foreground">
                 Kombinasi Leaflet, OpenStreetMap, OSRM API & Geocoding
               </h3>
@@ -119,7 +117,7 @@ export default function MapsRoutingPage() {
           <div className="p-6 rounded-xl bg-card text-card-foreground border border-border space-y-4">
             <h3 className="font-display text-lg font-semibold text-foreground flex items-center gap-2">
               <Code2 className="size-5 text-primary" />
-              Alur Data (Data Flow Architecture)
+              {t("lab.dataFlow")}
             </h3>
 
             <div className="bg-muted/60 p-6 rounded-lg border border-border font-mono text-xs text-foreground leading-relaxed overflow-x-auto">
@@ -150,7 +148,7 @@ export default function MapsRoutingPage() {
           <div className="p-6 rounded-xl bg-card text-card-foreground border border-border space-y-4">
             <h3 className="font-display text-lg font-semibold text-foreground flex items-center gap-2">
               <ShieldCheck className="size-5 text-primary" />
-              Tantangan Teknis & SSR Handling
+              {t("lab.challenges")}
             </h3>
 
             <ul className="space-y-3 text-sm text-muted-foreground">

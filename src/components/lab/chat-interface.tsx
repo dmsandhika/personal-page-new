@@ -139,7 +139,7 @@ export function ChatInterface() {
   };
 
   return (
-    <div className="flex flex-col h-[650px] w-full bg-card text-card-foreground border border-border rounded-xl shadow-md overflow-hidden font-sans">
+    <div className="flex flex-col h-[520px] sm:h-[650px] w-full bg-card text-card-foreground border border-border rounded-xl shadow-md overflow-hidden font-sans">
       {/* Top Header */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-muted/30">
         <div className="flex items-center gap-3">

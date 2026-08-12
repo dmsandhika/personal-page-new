@@ -391,7 +391,7 @@ export function MapsInterface() {
         </div>
 
         {/* Right Column: Leaflet Map */}
-        <div className="lg:col-span-2 h-[550px]">
+        <div className="lg:col-span-2 h-[380px] sm:h-[480px] lg:h-[550px]">
           <MapComponent
             origin={originPoint}
             destination={destPoint}

@@ -32,6 +32,20 @@ export const dictionaries = {
     "contact.form.success": "Pesan terkirim! Terima kasih 🙌",
     "contact.form.error": "Gagal mengirim pesan, coba lagi nanti.",
     "locale.switchAria": "Ganti bahasa",
+
+    // Lab Translations
+    "lab.title": "Dimas Lab",
+    "lab.subtitle": "Technical Playground & Experiments",
+    "lab.intro": "Halaman khusus tempat saya mengeksplorasi teknologi baru, menguji integrasi third-party API, sistem realtime, dan membagikan tantangan teknis serta solusinya.",
+    "lab.backHub": "Kembali ke Dimas Lab Hub",
+    "lab.liveDemo": "Live Interactive Demo",
+    "lab.techOverview": "Ringkasan Teknis & Arsitektur",
+    "lab.problem": "Masalah",
+    "lab.solution": "Solusi",
+    "lab.dataFlow": "Alur Data (Data Flow Architecture)",
+    "lab.challenges": "Tantangan Teknis & Handling",
+    "lab.openDemo": "BUKA DEMO",
+    "lab.upcoming": "SEGERA HADIR",
   },
   en: {
     "section.about": "About",
@@ -62,6 +76,20 @@ export const dictionaries = {
     "contact.form.success": "Message sent! Thanks 🙌",
     "contact.form.error": "Failed to send, please try again later.",
     "locale.switchAria": "Switch language",
+
+    // Lab Translations
+    "lab.title": "Dimas Lab",
+    "lab.subtitle": "Technical Playground & Experiments",
+    "lab.intro": "A dedicated playground exploring emerging technologies, third-party API integrations, realtime systems, and technical challenges.",
+    "lab.backHub": "Back to Dimas Lab Hub",
+    "lab.liveDemo": "Live Interactive Demo",
+    "lab.techOverview": "Technical Overview & Architecture",
+    "lab.problem": "Problem",
+    "lab.solution": "Solution",
+    "lab.dataFlow": "Data Flow Architecture",
+    "lab.challenges": "Technical Challenges & Handling",
+    "lab.openDemo": "OPEN DEMO",
+    "lab.upcoming": "UPCOMING",
   },
   ar: {
     "section.about": "نبذة",
@@ -92,6 +120,20 @@ export const dictionaries = {
     "contact.form.success": "تم إرسال الرسالة! شكرًا 🙌",
     "contact.form.error": "فشل إرسال الرسالة، حاول مرة أخرى لاحقًا.",
     "locale.switchAria": "تغيير اللغة",
+
+    // Lab Translations
+    "lab.title": "دماس لاب",
+    "lab.subtitle": "الملعب الفني والتجارب",
+    "lab.intro": "صفحة مخصصة لاستكشاف التقنيات الحديثة، وتكامل واجهات البرمجة، والأنظمة في الوقت الفعلي، وتحديات البرمجة.",
+    "lab.backHub": "العودة إلى مركز دماس لاب",
+    "lab.liveDemo": "عرض تفاعلي مباشر",
+    "lab.techOverview": "النظرة العامة الفنية والمعمارية",
+    "lab.problem": "المشكلة",
+    "lab.solution": "الحل",
+    "lab.dataFlow": "معمارية تدفق البيانات",
+    "lab.challenges": "التحديات الفنية والحلول",
+    "lab.openDemo": "فتح العرض",
+    "lab.upcoming": "قريبًا",
   },
   // Jawa ngoko (santai)
   jv: {
@@ -123,6 +165,20 @@ export const dictionaries = {
     "contact.form.success": "Pesen wis kekirim! Matur nuwun 🙌",
     "contact.form.error": "Gagal ngirim pesen, coba maneh sesuk.",
     "locale.switchAria": "Ganti basa",
+
+    // Lab Translations
+    "lab.title": "Dimas Lab",
+    "lab.subtitle": "Playground Teknis & Eksperimen",
+    "lab.intro": "Kaca khusus panggonan eksplorasi teknologi anyar, nguji integrasi API, sistem realtime, lan ngedum tantangan teknis.",
+    "lab.backHub": "Balik menyang Hub Dimas Lab",
+    "lab.liveDemo": "Uji Coba Langsung",
+    "lab.techOverview": "Ringkasan Teknis & Arsitektur",
+    "lab.problem": "Tantangan / Masalah",
+    "lab.solution": "Solusi Teknis",
+    "lab.dataFlow": "Alur Data (Data Flow)",
+    "lab.challenges": "Tantangan Teknis",
+    "lab.openDemo": "BUKA DEMO",
+    "lab.upcoming": "SUWE MANGKUT",
   },
 } as const satisfies Record<Locale, Record<string, string>>;
 

@@ -9,8 +9,59 @@ import { FadeIn } from "@/components/motion/fade-in";
 import { SectionHeading } from "@/components/section-heading";
 import { useLocale } from "@/lib/i18n/locale-context";
 
+const CONTENT = {
+  headerDesc: {
+    id: "Integrasi langsung antara Next.js App Router, Google Gemini API, dan Supabase Database untuk menyediakan asisten interaktif yang dapat menjawab pertanyaan teknis seputar portfolio secara real-time.",
+    en: "Direct integration between Next.js App Router, Google Gemini API, and Supabase Database to provide an interactive assistant answering technical & portfolio inquiries in real-time.",
+    ar: "تكامل مباشر بين Next.js App Router و Google Gemini API و Supabase توفير مساعد تفاعلي يجيب على الاستفسارات التقنية وحافظة الأعمال مباشرة.",
+    jv: "Integrasi langsung ing antarane Next.js App Router, Google Gemini API, lan Supabase Database kanggo nyedhiyakake asisten interaktif sing njawab pitakon teknis seputar portofolio secara real-time.",
+  },
+  problemTitle: {
+    id: "Kebutuhan Pengunjung Mengetahui Profil Teknis Secara Cepat",
+    en: "Visitors Need Fast Access to Technical Profiles",
+    ar: "حاجة الزوار لمعرفة الملف التقني بسرعة",
+    jv: "Kebutuhan Pengunjung Kanggo Weruh Profil Teknis Kanthi Cepat",
+  },
+  problemDesc: {
+    id: "Pengunjung portfolio seringkali harus membaca banyak halaman untuk mengetahui keahlian teknis, riwayat teknologi yang dikuasai, atau detail eksperimen yang pernah dikerjakan.",
+    en: "Portfolio visitors often need to navigate multiple pages to understand technical skills, tech stack history, or experimental project details.",
+    ar: "غالبًا ما يتوجب على زوار حافظة الأعمال قراءة العديد من الصفحات لمعرفة المهارات التقنية والتفاصيل الفنية.",
+    jv: "Pengunjung portofolio asring kudu moco akeh kaca kanggo ngerti keahlian teknis, histori teknologi, utawa rincian eksperimen.",
+  },
+  solutionTitle: {
+    id: "Conversational AI Agent Berbasis System Prompt Context",
+    en: "Conversational AI Agent Powered by System Prompt Context",
+    ar: "وكيل ذكاء اصطناعي محادثي مدعوم بسياق النظام",
+    jv: "Agen AI Konversasional adhedhasar System Prompt Context",
+  },
+  solutionDesc: {
+    id: "Membangun AI Chatbot cerdas yang dibekali context profil Dimas Sandhika. Pengunjung dapat bertanya secara bebas dan mendapatkan jawaban spesifik berformat Markdown dalam hitungan detik.",
+    en: "Building a smart AI Chatbot equipped with Dimas Sandhika's profile context. Visitors can ask freely and receive structured Markdown responses in seconds.",
+    ar: "بناء روبوت محادثة محدد بسياق ملف Dimas Sandhika. يمكن للزوار السؤال بحرية والحصول على إجابات منسقة في ثوانٍ.",
+    jv: "Nggawe AI Chatbot pinter sing dilengkapi konteks profil Dimas Sandhika. Pengunjung iso takon kanthi bebas lan entuk wangsulan Markdown ing itungan detik.",
+  },
+  challenge1: {
+    id: "Keamanan Credentials: Gemini API Key tersimpan aman di server-side (.env.local & Vercel Env), tidak pernah di-expose ke client.",
+    en: "Credentials Security: Gemini API Key is safely stored on the server-side (.env.local & Vercel Env), never exposed to the client.",
+    ar: "أمان الاعتمادات: يتم حفظ مفتاح API بشكل آمن في جانب الخادم ولا يتم كشفه للعميل.",
+    jv: "Keamanan Credentials: Gemini API Key disimpen aman ing server-side (.env.local & Vercel Env), ora tau di-expose menyang client.",
+  },
+  challenge2: {
+    id: "Graceful Fallback: Jika database Supabase belum di-migrate, percakapan tetap berjalan normal via local session tanpa membuat aplikasi crash.",
+    en: "Graceful Fallback: If Supabase tables are not migrated yet, chat conversations operate seamlessly via local session without crashing.",
+    ar: "التراجع السلس: إذا لم يتم ترحيل قاعدة البيانات بعد، تعمل المحادثات بشكل طبيعي عبر الجلسة المحلية.",
+    jv: "Graceful Fallback: Yen database Supabase durung di-migrate, obrolan tetep mlaku normal liwat local session tanpa gawe aplikasi crash.",
+  },
+  challenge3: {
+    id: "Handling Missing API Key: UI menampilkan peringatan informatif yang ramah ketika API Key belum dipasang.",
+    en: "Handling Missing API Key: The UI gracefully displays an informative alert when the API Key is missing.",
+    ar: "معالجة عدم وجود المفتاح: تعرض الواجهة تنبيهًا معلوماتيًا عند عدم تثبيت مفتاح API.",
+    jv: "Handling Missing API Key: Tampilan UI nuduhake pengetan sing ramah yen API Key durung dipasang.",
+  },
+};
+
 export default function AIChatbotPage() {
-  const { t } = useLocale();
+  const { locale, t } = useLocale();
 
   return (
     <main className="relative min-h-screen bg-background text-foreground py-20 px-6 sm:px-10">
@@ -31,7 +82,7 @@ export default function AIChatbotPage() {
 
         {/* Experiment Header */}
         <FadeIn className="space-y-4 border-b border-border pb-8">
-          <SectionHeading number="EXP-01">AI CHATBOT ASSISTANT</SectionHeading>
+          <SectionHeading number="01">AI CHATBOT</SectionHeading>
 
           <div className="flex flex-wrap items-center gap-3">
             <div className="size-11 rounded-lg bg-primary/10 border border-primary/30 flex items-center justify-center text-primary">
@@ -41,14 +92,14 @@ export default function AIChatbotPage() {
               <span className="text-[0.65rem] font-mono font-semibold px-2.5 py-1 rounded-full uppercase border border-primary/40 bg-primary/10 text-primary">
                 ● EXPERIMENT 01 — LIVE
               </span>
-              <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-foreground mt-2">
-                AI Chatbot Assistant
+              <h1 className="font-display text-2xl sm:text-4xl font-bold tracking-tight text-foreground mt-2">
+                AI Chatbot
               </h1>
             </div>
           </div>
 
           <p className="text-muted-foreground text-base sm:text-lg leading-relaxed max-w-3xl">
-            Integrasi langsung antara Next.js App Router, Google Gemini API, dan Supabase Database untuk menyediakan asisten interaktif yang dapat menjawab pertanyaan teknis seputar portfolio secara real-time.
+            {CONTENT.headerDesc[locale] || CONTENT.headerDesc.id}
           </p>
 
           <div className="flex flex-wrap gap-2 pt-2 font-mono text-xs">
@@ -66,12 +117,20 @@ export default function AIChatbotPage() {
 
         {/* SECTION 1: Interactive Live Demo */}
         <FadeIn className="space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
             <h2 className="font-display text-xl font-bold text-foreground flex items-center gap-2">
               <Sparkles className="size-5 text-primary" />
               {t("lab.liveDemo")}
             </h2>
-            <span className="font-mono text-xs text-muted-foreground uppercase tracking-wider">Uji coba langsung AI Assistant</span>
+            <span className="font-mono text-xs text-muted-foreground uppercase tracking-wider">
+              {locale === "en"
+                ? "Test live AI Assistant"
+                : locale === "ar"
+                ? "اختبار المساعد المباشر"
+                : locale === "jv"
+                ? "Uji coba asisten AI"
+                : "Uji coba langsung AI Assistant"}
+            </span>
           </div>
 
           <ChatInterface />
@@ -85,7 +144,13 @@ export default function AIChatbotPage() {
               {t("lab.techOverview")}
             </h2>
             <p className="text-muted-foreground text-sm">
-              Dokumentasi arsitektur dan aspek teknis dibalik pembuatan eksperimen ini.
+              {locale === "en"
+                ? "System architecture documentation and technical challenges behind this experiment."
+                : locale === "ar"
+                ? "توثيق معمارية النظام والتحديات الفنية."
+                : locale === "jv"
+                ? "Dokumentasi arsitektur sistem lan tantangan teknis."
+                : "Dokumentasi arsitektur dan aspek teknis dibalik pembuatan eksperimen ini."}
             </p>
           </div>
 
@@ -94,10 +159,10 @@ export default function AIChatbotPage() {
             <div className="p-6 rounded-xl bg-card text-card-foreground border border-border space-y-3">
               <div className="font-mono text-xs text-primary uppercase tracking-wider font-semibold">{t("lab.problem")}</div>
               <h3 className="font-display text-lg font-semibold text-foreground">
-                Kebutuhan Pengunjung Mengetahui Profil Teknis Secara Cepat
+                {CONTENT.problemTitle[locale] || CONTENT.problemTitle.id}
               </h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Pengunjung portfolio seringkali harus membaca banyak halaman untuk mengetahui keahlian teknis, riwayat teknologi yang dikuasai, atau detail eksperimen yang pernah dikerjakan.
+                {CONTENT.problemDesc[locale] || CONTENT.problemDesc.id}
               </p>
             </div>
 
@@ -105,10 +170,10 @@ export default function AIChatbotPage() {
             <div className="p-6 rounded-xl bg-card text-card-foreground border border-border space-y-3">
               <div className="font-mono text-xs text-primary uppercase tracking-wider font-semibold">{t("lab.solution")}</div>
               <h3 className="font-display text-lg font-semibold text-foreground">
-                Conversational AI Agent Berbasis System Prompt Context
+                {CONTENT.solutionTitle[locale] || CONTENT.solutionTitle.id}
               </h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Membangun AI Chatbot cerdas yang dibekali context profil Dimas Sandhika. Pengunjung dapat bertanya secara bebas dan mendapatkan jawaban spesifik berformat Markdown dalam hitungan detik.
+                {CONTENT.solutionDesc[locale] || CONTENT.solutionDesc.id}
               </p>
             </div>
           </div>
@@ -156,19 +221,19 @@ export default function AIChatbotPage() {
               <li className="flex items-start gap-2.5">
                 <CheckCircle2 className="size-4 text-primary shrink-0 mt-0.5" />
                 <span>
-                  <strong className="text-foreground">Keamanan Credentials:</strong> Gemini API Key tersimpan aman di server-side (`.env.local` & Vercel Env), tidak pernah di-expose ke client.
+                  {CONTENT.challenge1[locale] || CONTENT.challenge1.id}
                 </span>
               </li>
               <li className="flex items-start gap-2.5">
                 <CheckCircle2 className="size-4 text-primary shrink-0 mt-0.5" />
                 <span>
-                  <strong className="text-foreground">Graceful Fallback:</strong> Jika database Supabase belum di-migrate, percakapan tetap berjalan normal via local session tanpa membuat aplikasi crash.
+                  {CONTENT.challenge2[locale] || CONTENT.challenge2.id}
                 </span>
               </li>
               <li className="flex items-start gap-2.5">
                 <CheckCircle2 className="size-4 text-primary shrink-0 mt-0.5" />
                 <span>
-                  <strong className="text-foreground">Handling Missing API Key:</strong> UI menampilkan peringatan informatif yang ramah ketika API Key belum dipasang.
+                  {CONTENT.challenge3[locale] || CONTENT.challenge3.id}
                 </span>
               </li>
             </ul>

@@ -100,7 +100,7 @@ export default function LabHubPage() {
         <FadeIn className="space-y-4 max-w-3xl">
           <SectionHeading number="LAB">{t("lab.title")}</SectionHeading>
 
-          <h1 className="font-display text-[clamp(2.5rem,7vw,4.5rem)] font-bold tracking-tight text-foreground leading-[1.05]">
+          <h1 className="font-display text-[clamp(2.2rem,6vw,4rem)] font-bold tracking-tight text-foreground leading-[1.05]">
             {t("lab.subtitle")}
           </h1>
 

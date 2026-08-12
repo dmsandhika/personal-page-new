@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Bot, User, Send, Trash2, Sparkles, RefreshCw, AlertCircle, Terminal, Copy, Check } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import { useLocale } from "@/lib/i18n/locale-context";
 
 interface Message {
   id: string;
@@ -11,20 +12,55 @@ interface Message {
   timestamp: string;
 }
 
-const PROMPT_SUGGESTIONS = [
-  "Apa saja keahlian teknis utama Dimas?",
-  "Jelaskan arsitektur teknis yang digunakan di Dimas Lab!",
-  "Teknologi apa saja yang dipakai di portfolio ini?",
-  "Bagaimana cara mengintegrasikan Gemini AI di Next.js?",
-];
+const PROMPTS_BY_LOCALE = {
+  id: [
+    "Apa saja keahlian teknis utama Dimas?",
+    "Jelaskan arsitektur teknis yang digunakan di Dimas Lab!",
+    "Teknologi apa saja yang dipakai di portfolio ini?",
+    "Bagaimana cara mengintegrasikan Gemini AI di Next.js?",
+  ],
+  en: [
+    "What are Dimas's primary technical skills?",
+    "Explain the architecture used in Dimas Lab!",
+    "What technologies are used in this portfolio?",
+    "How to integrate Gemini AI into Next.js?",
+  ],
+  ar: [
+    "ما هي المهارات التقنية الرئيسية لدماس؟",
+    "اشرح المعمارية التقنية المستخدمة في دماس لاب!",
+    "ما هي التقنيات المستخدمة في هذه المحفظة؟",
+    "كيفية دمج Gemini AI في Next.js؟",
+  ],
+  jv: [
+    "Apa wae keahlian teknis utamane Dimas?",
+    "Jelasno arsitektur teknis ing Dimas Lab!",
+    "Teknologi apa wae sing dienggo ing portofolio iki?",
+    "Kepiye cara ngintegrasikake Gemini AI ing Next.js?",
+  ],
+};
 
 export function ChatInterface() {
+  const { locale } = useLocale();
+  const suggestions = PROMPTS_BY_LOCALE[locale] || PROMPTS_BY_LOCALE.id;
+
+  const getWelcomeMsg = () => {
+    switch (locale) {
+      case "en":
+        return "Hello! 👋 I am **Dimas AI Assistant**.\n\nYou can ask about Dimas's technical skills, experimental projects in Dimas Lab, or modern web development. What would you like to know?";
+      case "ar":
+        return "مرحبًا! 👋 أنا **مساعد دماس بالذكاء الاصطناعي**.\n\nيمكنك السؤال عن المهارات التقنية، والمشاريع التجريبية، وتطوير الويب الحديث. ماذا تريد أن تعرف؟";
+      case "jv":
+        return "Halo! 👋 Kulo **Dimas AI Assistant**.\n\nSampeyan saged takon babagan keahlian teknis Dimas, proyek eksperimen ing Dimas Lab, utawa web development modern. Wonten sing pengin ditakokake?";
+      default:
+        return "Halo! 👋 Saya adalah **Dimas AI Assistant**.\n\nKamu bisa bertanya tentang keahlian teknis Dimas, proyek eksperimen di Dimas Lab, atau diskusi seputar web development modern. Ada yang ingin kamu ketahui?";
+    }
+  };
+
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "welcome",
       role: "assistant",
-      content:
-        "Halo! 👋 Saya adalah **Dimas AI Assistant**.\n\nKamu bisa bertanya tentang keahlian teknis Dimas, proyek eksperimen di Dimas Lab, atau diskusi seputar web development modern. Ada yang ingin kamu ketahui?",
+      content: getWelcomeMsg(),
       timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     },
   ]);
@@ -122,8 +158,7 @@ export function ChatInterface() {
       {
         id: "welcome-" + Date.now(),
         role: "assistant",
-        content:
-          "Percakapan telah dibersihkan. ✨ Ada pertanyaan lain yang ingin disampaikan?",
+        content: getWelcomeMsg(),
         timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       },
     ]);
@@ -254,7 +289,15 @@ export function ChatInterface() {
             </div>
             <div className="px-4 py-3 rounded-xl rounded-bl-xs bg-muted/60 border border-border text-muted-foreground flex items-center gap-2 text-xs font-mono">
               <RefreshCw className="size-3.5 animate-spin text-primary" />
-              <span>Dimas AI sedang mengetik...</span>
+              <span>
+                {locale === "en"
+                  ? "Dimas AI is typing..."
+                  : locale === "ar"
+                  ? "جارٍ الكتابة..."
+                  : locale === "jv"
+                  ? "Dimas AI lagi ngetik..."
+                  : "Dimas AI sedang mengetik..."}
+              </span>
             </div>
           </div>
         )}
@@ -272,10 +315,17 @@ export function ChatInterface() {
       {messages.length <= 2 && !isLoading && (
         <div className="px-6 py-3 border-t border-border bg-muted/20">
           <p className="text-[0.65rem] font-mono text-muted-foreground mb-2 flex items-center gap-1.5 uppercase tracking-wider">
-            <Terminal className="size-3 text-primary" /> Contoh Pertanyaan:
+            <Terminal className="size-3 text-primary" />{" "}
+            {locale === "en"
+              ? "Suggested Prompts:"
+              : locale === "ar"
+              ? "الأسئلة المقترحة:"
+              : locale === "jv"
+              ? "Contoh Pitakon:"
+              : "Contoh Pertanyaan:"}
           </p>
           <div className="flex flex-wrap gap-2">
-            {PROMPT_SUGGESTIONS.map((suggestion, idx) => (
+            {suggestions.map((suggestion, idx) => (
               <button
                 key={idx}
                 onClick={() => handleSendMessage(suggestion)}
@@ -301,7 +351,15 @@ export function ChatInterface() {
             type="text"
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
-            placeholder="Tanyakan sesuatu tentang Dimas atau teknologinya..."
+            placeholder={
+              locale === "en"
+                ? "Ask anything about Dimas or technology..."
+                : locale === "ar"
+                ? "اسأل أي شيء عن دماس أو التقنية..."
+                : locale === "jv"
+                ? "Takono apa wae babagan Dimas utawa teknologi..."
+                : "Tanyakan sesuatu tentang Dimas atau teknologinya..."
+            }
             disabled={isLoading}
             className="flex-1 bg-background border border-border focus:border-primary/50 focus:ring-1 focus:ring-primary/50 rounded-lg px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-all disabled:opacity-50 font-sans"
           />
@@ -311,7 +369,15 @@ export function ChatInterface() {
             className="bg-primary hover:bg-primary/90 text-primary-foreground px-5 py-2.5 rounded-lg font-mono text-xs uppercase tracking-wider font-semibold flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             <Send className="size-3.5" />
-            <span className="hidden sm:inline">Kirim</span>
+            <span className="hidden sm:inline">
+              {locale === "en"
+                ? "Send"
+                : locale === "ar"
+                ? "إرسال"
+                : locale === "jv"
+                ? "Kirim"
+                : "Kirim"}
+            </span>
           </button>
         </form>
       </div>

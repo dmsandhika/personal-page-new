@@ -38,10 +38,10 @@ const EXPERIMENTS = [
     title: "Maps & Interactive Routing",
     description:
       "Interactive route planner dan pencari jalur alternatif menggunakan Leaflet, OpenStreetMap, dan OSRM API.",
-    status: "PLANNED",
+    status: "LIVE",
     tags: ["Leaflet", "OpenStreetMap", "OSRM API"],
     icon: MapPin,
-    href: "#",
+    href: "/lab/maps-routing",
   },
   {
     id: "realtime-chat",

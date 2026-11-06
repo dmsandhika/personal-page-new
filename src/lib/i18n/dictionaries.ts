@@ -4,6 +4,11 @@ export const locales: Locale[] = ["id", "en", "ar", "jv"];
 
 export const dictionaries = {
   id: {
+    "stats.projects": "Proyek",
+    "stats.experience": "Pengalaman",
+    "stats.education": "Pendidikan",
+    "contact.cta": "Ayo bikin sesuatu yang keren bareng.",
+    "nav.aria": "Navigasi",
     "section.about": "Tentang",
     "section.education": "Pendidikan",
     "section.experience": "Pengalaman",
@@ -48,6 +53,11 @@ export const dictionaries = {
     "lab.upcoming": "SEGERA HADIR",
   },
   en: {
+    "stats.projects": "Projects",
+    "stats.experience": "Experiences",
+    "stats.education": "Education",
+    "contact.cta": "Let's build something great together.",
+    "nav.aria": "Navigation",
     "section.about": "About",
     "section.education": "Education",
     "section.experience": "Experience",
@@ -92,6 +102,11 @@ export const dictionaries = {
     "lab.upcoming": "UPCOMING",
   },
   ar: {
+    "stats.projects": "مشاريع",
+    "stats.experience": "خبرات",
+    "stats.education": "تعليم",
+    "contact.cta": "لنبنِ شيئًا رائعًا معًا.",
+    "nav.aria": "التنقل",
     "section.about": "نبذة",
     "section.education": "التعليم",
     "section.experience": "الخبرة",
@@ -137,6 +152,11 @@ export const dictionaries = {
   },
   // Jawa ngoko (santai)
   jv: {
+    "stats.projects": "Proyek",
+    "stats.experience": "Pengalaman",
+    "stats.education": "Pendhidhikan",
+    "contact.cta": "Ayo gawe sing keren bareng.",
+    "nav.aria": "Navigasi",
     "section.about": "Ngenani",
     "section.education": "Pendhidhikan",
     "section.experience": "Pengalaman",

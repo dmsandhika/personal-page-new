@@ -9,6 +9,7 @@ import { Experience } from "@/components/sections/experience";
 import { Projects } from "@/components/sections/projects";
 import { Contact } from "@/components/sections/contact";
 import { PageControls } from "@/components/page-controls";
+import { NavDock } from "@/components/nav-dock";
 import { SiteLogo } from "@/components/site-logo";
 
 export const revalidate = 0;
@@ -99,11 +100,27 @@ export default async function Home() {
       <PageControls />
       <Hero profile={profile} />
       <TechMarquee />
-      <About profile={profile} />
+      <About
+        profile={profile}
+        stats={{
+          projects: projects?.length ?? 0,
+          experience: experience?.length ?? 0,
+          education: education?.length ?? 0,
+        }}
+      />
       <Education items={education ?? []} />
       <Experience items={experience ?? []} />
       <Projects items={projects ?? []} />
       <Contact profile={profile} />
+      <NavDock
+        available={[
+          "about",
+          ...(education?.length ? ["education"] : []),
+          ...(experience?.length ? ["experience"] : []),
+          ...(projects?.length ? ["projects"] : []),
+          "contact",
+        ]}
+      />
     </main>
   );
 }

@@ -6,6 +6,7 @@ import { Mail, Globe } from "lucide-react";
 import type { Profile } from "@/lib/types";
 import { FadeIn } from "@/components/motion/fade-in";
 import { SectionHeading } from "@/components/section-heading";
+import { Magnetic } from "@/components/fx/magnetic";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -52,24 +53,29 @@ export function Contact({ profile }: { profile: Profile }) {
   ].filter((link) => link.href);
 
   return (
-    <section id="contact" className="mx-auto max-w-3xl px-6 py-32 text-center sm:px-10">
+    <section id="contact" className="mx-auto max-w-4xl px-6 py-32 text-center sm:px-10">
       <FadeIn>
         <SectionHeading number="05" align="center">
           {t("section.contact")}
         </SectionHeading>
-        <p className="mx-auto mb-10 max-w-md text-xl leading-snug text-muted-foreground sm:text-2xl">
+        <p className="mx-auto mb-12 max-w-2xl bg-linear-to-br from-foreground via-foreground to-primary bg-clip-text font-display text-3xl leading-tight font-semibold tracking-tight text-transparent sm:text-5xl">
+          {t("contact.cta")}
+        </p>
+        <p className="mx-auto mb-10 max-w-md text-muted-foreground sm:text-lg">
           {t("contact.subtitle")}
         </p>
 
-        <Button
-          size="lg"
-          nativeButton={false}
-          className="h-auto min-h-11 max-w-full rounded-full px-6 py-2.5 text-sm leading-snug break-all whitespace-normal shadow-[0_12px_30px_-12px_var(--primary)] transition-all hover:-translate-y-0.5 hover:shadow-[0_16px_36px_-12px_var(--primary)]"
-          render={<a href={`mailto:${profile.email}`} />}
-        >
-          <Mail className="size-4" />
-          {profile.email}
-        </Button>
+        <Magnetic strength={0.2}>
+          <Button
+            size="lg"
+            nativeButton={false}
+            className="h-auto min-h-12 max-w-full rounded-full px-7 py-3 text-sm leading-snug break-all whitespace-normal shadow-[0_12px_40px_-10px_var(--primary)] transition-shadow hover:shadow-[0_16px_50px_-8px_var(--primary)]"
+            render={<a href={`mailto:${profile.email}`} />}
+          >
+            <Mail className="size-4" />
+            {profile.email}
+          </Button>
+        </Magnetic>
 
         {links.length > 0 && (
           <div className="mt-8 flex justify-center gap-4">
@@ -80,7 +86,7 @@ export function Contact({ profile }: { profile: Profile }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={label}
-                className="text-muted-foreground hover:text-primary"
+                className="flex size-11 items-center justify-center rounded-full border border-border bg-card/40 text-muted-foreground backdrop-blur-sm transition-all hover:-translate-y-1 hover:border-primary hover:text-primary"
               >
                 <Icon className="size-5" />
               </a>
@@ -97,7 +103,7 @@ export function Contact({ profile }: { profile: Profile }) {
         <form
           ref={formRef}
           action={handleSubmit}
-          className="mt-8 space-y-4 text-left"
+          className="mt-8 space-y-4 rounded-2xl border border-border bg-card/50 p-6 text-left backdrop-blur-md sm:p-8"
         >
           <input
             type="text"

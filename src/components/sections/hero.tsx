@@ -20,7 +20,7 @@ function SplitName({ text }: { text: string }) {
   return (
     <>
       {text.split(" ").map((word, wi) => (
-        <span key={wi} className="inline-block overflow-hidden pb-[0.08em] align-bottom">
+        <span key={wi} className="inline-block overflow-hidden pb-[0.08em] align-bottom whitespace-nowrap">
           {Array.from(word).map((ch, ci) => (
             <motion.span
               key={ci}
@@ -82,7 +82,7 @@ export function Hero({ profile }: { profile: Profile }) {
 
           <h1
             aria-label={profile.name}
-            className="font-display text-[clamp(3rem,10.5vw,8rem)] leading-[0.9] font-bold tracking-tighter"
+            className="font-display text-[clamp(2.5rem,7vw,5.75rem)] leading-[0.95] font-bold tracking-tighter"
           >
             <span aria-hidden>
               <SplitName text={profile.name} />

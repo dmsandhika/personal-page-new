@@ -6,6 +6,7 @@ import type { Project } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { FadeIn } from "@/components/motion/fade-in";
 import { SectionHeading } from "@/components/section-heading";
+import { Tilt } from "@/components/fx/tilt";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,13 +35,13 @@ function Thumbnail({ cover, title }: { cover?: string; title: string }) {
         src={cover}
         alt={title}
         loading="lazy"
-        className="aspect-video w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
+        className="absolute inset-0 size-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.07]"
       />
     );
   }
   return (
-    <div className="tech-grid flex aspect-video w-full items-center justify-center bg-muted/40">
-      <span className="font-mono text-2xl text-muted-foreground/60">{"{ }"}</span>
+    <div className="tech-grid absolute inset-0 flex items-center justify-center bg-muted/40">
+      <span className="font-mono text-3xl text-muted-foreground/60">{"{ }"}</span>
     </div>
   );
 }
@@ -77,7 +78,7 @@ export function Projects({ items }: { items: Project[] }) {
         <SectionHeading number="04">{t("section.projects")}</SectionHeading>
       </FadeIn>
 
-      {/* Galeri grid: kartu ringkas, klik untuk detail */}
+      {/* Bento grid: tiap kartu ke-1, ke-6, … melebar di desktop */}
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((project, i) => {
           const title = pickByLocale(locale, {
@@ -87,39 +88,50 @@ export function Projects({ items }: { items: Project[] }) {
             jv: project.title_jv,
           });
           const images = projectImages(project);
+          const wide = i % 5 === 0;
 
           return (
-            <FadeIn key={project.id} delay={(i % 3) * 0.06}>
-              <button
-                type="button"
-                onClick={() => {
-                  setSelected(project);
-                  setImgIndex(0);
-                }}
-                className="group w-full cursor-pointer overflow-hidden rounded-lg border border-border bg-card text-left transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
-              >
-                <div className="relative overflow-hidden">
-                  <Thumbnail cover={images[0]} title={title} />
-                  {images.length > 1 && (
-                    <span className="absolute top-3 left-3 flex items-center gap-1 rounded-full border border-border bg-background/70 px-2 py-0.5 font-mono text-[0.65rem] text-foreground/80 backdrop-blur-sm">
-                      <Images className="size-3" />
-                      {images.length}
+            <FadeIn
+              key={project.id}
+              delay={(i % 3) * 0.06}
+              className={cn(wide && "lg:col-span-2")}
+            >
+              <Tilt className="h-full rounded-2xl" max={5}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelected(project);
+                    setImgIndex(0);
+                  }}
+                  className="group flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-border bg-card/60 text-left backdrop-blur-sm transition-colors duration-300 hover:border-primary/50 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+                >
+                  <div className="relative min-h-52 flex-1 overflow-hidden sm:min-h-60">
+                    <Thumbnail cover={images[0]} title={title} />
+                    <div className="absolute inset-0 bg-linear-to-t from-card/80 via-transparent to-transparent" />
+                    <span className="absolute top-3 left-3 rounded-full border border-border bg-background/70 px-2 py-0.5 font-mono text-[0.65rem] text-foreground/80 backdrop-blur-sm">
+                      {String(i + 1).padStart(2, "0")}
                     </span>
-                  )}
-                  <span className="absolute top-3 right-3 flex size-7 items-center justify-center rounded-full border border-border bg-background/70 opacity-0 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-100">
-                    <ArrowUpRight className="size-3.5" />
-                  </span>
-                </div>
-                <div className="p-4">
-                  <h3 className="font-display font-semibold tracking-tight">{title}</h3>
-                  {project.tags.length > 0 && (
-                    <p className="mt-1.5 truncate font-mono text-[0.65rem] tracking-wider text-muted-foreground uppercase">
-                      {project.tags.slice(0, 3).join(" · ")}
-                      {project.tags.length > 3 ? ` +${project.tags.length - 3}` : ""}
-                    </p>
-                  )}
-                </div>
-              </button>
+                    {images.length > 1 && (
+                      <span className="absolute top-3 left-14 flex items-center gap-1 rounded-full border border-border bg-background/70 px-2 py-0.5 font-mono text-[0.65rem] text-foreground/80 backdrop-blur-sm">
+                        <Images className="size-3" />
+                        {images.length}
+                      </span>
+                    )}
+                    <span className="absolute top-3 right-3 flex size-8 items-center justify-center rounded-full bg-primary text-primary-foreground opacity-0 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:opacity-100">
+                      <ArrowUpRight className="size-4" />
+                    </span>
+                  </div>
+                  <div className="p-5">
+                    <h3 className="font-display text-lg font-semibold tracking-tight">{title}</h3>
+                    {project.tags.length > 0 && (
+                      <p className="mt-1.5 truncate font-mono text-[0.65rem] tracking-wider text-muted-foreground uppercase">
+                        {project.tags.slice(0, 3).join(" · ")}
+                        {project.tags.length > 3 ? ` +${project.tags.length - 3}` : ""}
+                      </p>
+                    )}
+                  </div>
+                </button>
+              </Tilt>
             </FadeIn>
           );
         })}

@@ -5,8 +5,8 @@ import { AnimatePresence, motion } from "framer-motion";
 
 // Sapaan dalam berbagai bahasa. Warna terang yang menyala di latar hitam.
 const GREETINGS: { text: string; label: string; color: string; lang?: string }[] = [
-  { text: "Halo", label: "Indonesia", color: "#c7f24a", lang: "id" },
-  { text: "Hello", label: "English", color: "#4ad3ff", lang: "en" },
+  { text: "Halo", label: "Indonesia", color: "#34d399", lang: "id" },
+  { text: "Hello", label: "English", color: "#22d3ee", lang: "en" },
   { text: "Hola", label: "Español", color: "#ffb84a", lang: "es" },
   { text: "Bonjour", label: "Français", color: "#ff6ad5", lang: "fr" },
   { text: "你好", label: "中文", color: "#8b7bff", lang: "zh" },

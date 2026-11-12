@@ -22,7 +22,7 @@ export function SectionHeading({
   return (
     <div
       className={cn(
-        "mb-14 flex flex-col gap-4",
+        "mb-10 flex flex-col gap-3",
         center ? "items-center text-center" : "items-start",
         className
       )}
@@ -38,7 +38,7 @@ export function SectionHeading({
           whileInView={{ y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.8, ease }}
-          className="font-display text-5xl leading-none font-bold tracking-tighter sm:text-7xl"
+          className="font-display text-4xl leading-none font-bold tracking-tighter sm:text-5xl"
         >
           {children}
         </motion.h2>

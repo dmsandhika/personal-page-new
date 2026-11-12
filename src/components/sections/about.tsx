@@ -35,15 +35,15 @@ export function About({
 
       <RevealText
         text={bio}
-        className="font-display text-xl leading-[1.45] font-medium tracking-tight sm:text-3xl sm:leading-[1.4]"
+        className="font-display text-lg leading-[1.5] font-medium tracking-tight sm:text-2xl sm:leading-[1.5]"
       />
 
       {items.length > 0 && (
         <FadeIn>
-          <div className="mt-12 grid grid-cols-3 divide-x divide-border rounded-2xl border border-border bg-card/40 backdrop-blur-sm rtl:divide-x-reverse">
+          <div className="mt-10 grid grid-cols-3 divide-x divide-border rounded-2xl border border-border bg-card/40 backdrop-blur-sm rtl:divide-x-reverse">
             {items.map((s) => (
-              <div key={s.label} className="px-4 py-6 text-center sm:py-8">
-                <p className="font-display text-3xl font-bold text-primary tabular-nums sm:text-5xl">
+              <div key={s.label} className="px-4 py-5 text-center sm:py-6">
+                <p className="font-display text-2xl font-bold text-primary tabular-nums sm:text-4xl">
                   <CountUp to={s.n} />
                   <span className="text-muted-foreground">+</span>
                 </p>

@@ -226,7 +226,9 @@ export function LaserBeam({
       // gumpalan lelehan: membesar & memudar seiring umur, memanjang saat jatuh
       for (const p of parts) {
         const k = p.age / p.life;
-        const alpha = 0.34 * Math.pow(1 - k, 1.6) * Math.min(1, p.age / 0.18);
+        // memudar halus setelah lewat bawah card, supaya tak berhenti mendadak
+        const below = clamp((p.y - (ly + geo.h)) / 240, 0, 1);
+        const alpha = 0.34 * Math.pow(1 - k, 1.6) * Math.min(1, p.age / 0.18) * (1 - smooth(below));
         const r = p.r0 * (1 + 1.5 * k);
         const stretch = 1 + clamp(p.vy / 160, 0, 2.6);
         const sx = 1 + clamp(Math.abs(p.vx) / 240, 0, 1.8);

@@ -69,7 +69,7 @@ export function Hero({ profile }: { profile: Profile }) {
   return (
     <section className="relative mx-auto flex min-h-screen max-w-6xl flex-col justify-center px-6 py-24 sm:px-10 sm:py-28">
       {/* Full-bleed: keluar dari max-w section agar sinar menempel di tepi atas layar */}
-      <div className="absolute inset-y-0 left-1/2 w-screen -translate-x-1/2">
+      <div className="absolute top-0 -bottom-[25vh] left-1/2 w-screen -translate-x-1/2">
         <LaserBeam target={cardRef} delay={d} />
       </div>
       <div className="relative z-10 grid items-center gap-10 sm:gap-14 lg:grid-cols-[1.5fr_1fr] lg:gap-16">

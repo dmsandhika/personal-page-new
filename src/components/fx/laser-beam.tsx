@@ -1,39 +1,75 @@
 "use client";
 
-import { useEffect, useRef, useState, type RefObject } from "react";
+import { useEffect, useRef, type RefObject } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 
-// Sinar laser besar yang jatuh dari tepi atas halaman dan MENDARAT di sebuah card
-// (target). Saat menyentuh tepi atas card, cahaya pecah: flash, menyebar sepanjang
-// tepi, menyinari muka card (lihat <LaserCardGlow/>), lalu mengalir di sisi card.
+// Sinar laser besar yang jatuh dari tepi atas halaman dan MENDARAT di sebuah card.
+// Saat menyentuh tepi atas card, cahaya "meleleh": gumpalan cahaya lunak menyembur
+// sepanjang tepi, melambat, lalu menetes ke bawah di sisi card. Digambar di canvas
+// (blending aditif + sprite radial) supaya tepinya cair dan menyatu, bukan bentuk kaku.
 //
-// Pakai:
 //   const ref = useRef<HTMLDivElement>(null)
-//   <LaserBeam target={ref} delay={1.8} />          // sibling di belakang card
+//   <LaserBeam target={ref} delay={1.8} />            // di belakang card
 //   <div ref={ref}> …card… <LaserCardGlow delay={1.8} /> </div>
 //
-// Warna mengikuti --primary. Reduced-motion: langsung tampil final tanpa animasi.
+// Warna mengikuti --primary. Reduced-motion: satu frame statis, tanpa loop.
 
-export const LASER_DROP = 1.0; // durasi sinar jatuh (detik)
-const FALL_EASE = [0.5, 0, 0.9, 0.5] as const; // mulai pelan, makin cepat
-const MELT_EASE = [0.16, 1, 0.3, 1] as const; // meledak lalu mengendap
+export const LASER_DROP = 1.0; // detik sinar jatuh sampai card
+const RES = 0.5; // resolusi canvas (glow lunak tak perlu resolusi penuh)
+const MAX_PARTICLES = 260;
 
-const mix = (pct: number, base = "var(--primary)") =>
-  `color-mix(in oklch, ${base} ${pct}%, transparent)`;
+const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v));
+const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
+const smooth = (x: number) => x * x * (3 - 2 * x);
 
-// Garis aliran: mulai di tepi atas card (500,0), menyapu keluar sepanjang tepi,
-// lalu turun di sisi card. Dikerjakan untuk sisi kanan lalu dicerminkan ke kiri.
-type Pt = [number, number];
-const RIGHT: Pt[][] = [
-  [[500, 0], [600, -10], [700, -20], [760, 60], [840, 400], [860, 820]],
-  [[500, 0], [580, -4], [660, -4], [700, 70], [760, 420], [770, 820]],
-  [[500, 0], [560, -30], [720, -80], [820, 20], [940, 380], [960, 820]],
-];
-const toPath = (p: Pt[]) =>
-  `M${p[0][0]} ${p[0][1]} C ${p[1][0]} ${p[1][1]}, ${p[2][0]} ${p[2][1]}, ${p[3][0]} ${p[3][1]} S ${p[4][0]} ${p[4][1]}, ${p[5][0]} ${p[5][1]}`;
-const LINES = RIGHT.flatMap((p) => [toPath(p), toPath(p.map(([x, y]) => [1000 - x, y] as Pt))]);
+type Particle = {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  age: number;
+  life: number;
+  r0: number;
+  seed: number;
+};
+type Geo = { lx: number; ly: number; w: number; h: number; cw: number; ch: number };
 
-type Geo = { lx: number; ly: number; w: number; h: number };
+// Sprite gumpalan: warna primary, pusat memutih ("panas"), tepi memudar halus.
+function makeSprite(color: string, hot: number) {
+  const S = 128;
+  const c = document.createElement("canvas");
+  c.width = c.height = S;
+  const x = c.getContext("2d")!;
+  x.fillStyle = color;
+  x.fillRect(0, 0, S, S);
+  x.globalCompositeOperation = "source-atop";
+  let g = x.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
+  g.addColorStop(0, `rgba(255,255,255,${hot})`);
+  g.addColorStop(0.45, `rgba(255,255,255,${hot * 0.25})`);
+  g.addColorStop(1, "rgba(255,255,255,0)");
+  x.fillStyle = g;
+  x.fillRect(0, 0, S, S);
+  x.globalCompositeOperation = "destination-in";
+  g = x.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
+  g.addColorStop(0, "rgba(0,0,0,1)");
+  g.addColorStop(0.25, "rgba(0,0,0,0.75)");
+  g.addColorStop(0.5, "rgba(0,0,0,0.32)");
+  g.addColorStop(0.75, "rgba(0,0,0,0.08)");
+  g.addColorStop(1, "rgba(0,0,0,0)");
+  x.fillStyle = g;
+  x.fillRect(0, 0, S, S);
+  return c;
+}
+
+function resolvePrimary(host: HTMLElement) {
+  const probe = document.createElement("span");
+  probe.style.display = "none";
+  probe.style.color = "var(--primary)";
+  host.appendChild(probe);
+  const c = getComputedStyle(probe).color;
+  probe.remove();
+  return c || "#34d399";
+}
 
 export function LaserBeam({
   target,
@@ -45,53 +81,183 @@ export function LaserBeam({
   className?: string;
 }) {
   const reduce = useReducedMotion();
-  const still = !!reduce;
   const wrapRef = useRef<HTMLDivElement>(null);
-  const [g, setG] = useState<Geo | null>(null);
-  const hit = delay + LASER_DROP; // saat sinar menyentuh card
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Ukur posisi tepi atas card relatif terhadap lapisan ini.
   useEffect(() => {
     const wrap = wrapRef.current;
-    if (!wrap) return;
+    const canvas = canvasRef.current;
+    if (!wrap || !canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let geo: Geo = { lx: 0, ly: 0, w: 320, h: 400, cw: 0, ch: 0 };
+    let soft = makeSprite("#34d399", 0.25);
+    let hot = makeSprite("#34d399", 1);
+    const rebuildSprites = () => {
+      const col = resolvePrimary(wrap);
+      soft = makeSprite(col, 0.22);
+      hot = makeSprite(col, 1);
+    };
+    rebuildSprites();
+
     const measure = () => {
       const wr = wrap.getBoundingClientRect();
       const t = target?.current;
-      if (t) {
-        const r = t.getBoundingClientRect();
-        setG({ lx: r.left - wr.left + r.width / 2, ly: r.top - wr.top, w: r.width, h: r.height });
-      } else {
-        setG({ lx: wr.width / 2, ly: wr.height * 0.6, w: 320, h: 400 });
-      }
+      const base = t
+        ? (() => {
+            const r = t.getBoundingClientRect();
+            return { lx: r.left - wr.left + r.width / 2, ly: r.top - wr.top, w: r.width, h: r.height };
+          })()
+        : { lx: wr.width / 2, ly: wr.height * 0.6, w: 320, h: 400 };
+      geo = { ...base, cw: wr.width, ch: wr.height };
+      canvas.width = Math.max(1, Math.round(wr.width * RES));
+      canvas.height = Math.max(1, Math.round(wr.height * RES));
     };
     measure();
+
     const ro = new ResizeObserver(measure);
     ro.observe(wrap);
     if (target?.current) ro.observe(target.current);
-    window.addEventListener("resize", measure);
-    return () => {
-      ro.disconnect();
-      window.removeEventListener("resize", measure);
-    };
-  }, [target]);
+    const mo = new MutationObserver(rebuildSprites); // ganti tema -> warna baru
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ["class", "data-theme"] });
 
-  const pool = (wMul: number, h: number, delayAdd: number, dur: number, stops: string) =>
-    g && (
-      <div
-        className="absolute"
-        style={{ left: g.lx - (g.w * wMul) / 2, top: g.ly - h / 2, width: g.w * wMul, height: h }}
-      >
-        <motion.div
-          className="size-full"
-          style={{ originX: 0.5, originY: 0.5 }}
-          initial={still ? false : { scaleX: 0.04, scaleY: 0.1, opacity: 0 }}
-          animate={{ scaleX: 1, scaleY: 1, opacity: 1 }}
-          transition={{ duration: dur, delay: hit - 0.05 + delayAdd, ease: MELT_EASE }}
-        >
-          <div className="laser-breathe size-full rounded-[50%] blur-3xl" style={{ background: stops }} />
-        </motion.div>
-      </div>
-    );
+    const parts: Particle[] = [];
+    let emitAcc = 0;
+
+    const blob = (img: HTMLCanvasElement, x: number, y: number, rx: number, ry: number, a: number) => {
+      if (a <= 0.003) return;
+      ctx.globalAlpha = a;
+      ctx.drawImage(img, x - rx, y - ry, rx * 2, ry * 2);
+    };
+
+    const step = (t: number, dt: number) => {
+      const { lx, ly, w } = geo;
+      const hitT = t - LASER_DROP;
+      // laju semburan: meledak saat tumbukan, lalu turun ke aliran tipis yang bertahan
+      if (hitT > 0) {
+        emitAcc += (16 + 80 * Math.exp(-hitT / 0.75)) * dt;
+        while (emitAcc >= 1 && parts.length < MAX_PARTICLES) {
+          emitAcc -= 1;
+          const dir = Math.random() < 0.5 ? -1 : 1;
+          const burst = hitT < 0.6 ? 1.5 : 1;
+          const sp = (90 + Math.random() * 340) * burst;
+          parts.push({
+            x: lx + (Math.random() - 0.5) * w * 0.35,
+            y: ly - 4 + Math.random() * 8,
+            vx: dir * sp,
+            vy: -30 + Math.random() * 50,
+            age: 0,
+            life: 2.4 + Math.random() * 2.2,
+            r0: 24 + Math.random() * 34,
+            seed: Math.random() * 6.28,
+          });
+        }
+        emitAcc = Math.min(emitAcc, 3);
+      }
+      const edge = w * 0.5 - 6;
+      for (let i = parts.length - 1; i >= 0; i--) {
+        const p = parts[i];
+        p.age += dt;
+        if (p.age >= p.life) {
+          parts.splice(i, 1);
+          continue;
+        }
+        const out = Math.abs(p.x - lx) > edge;
+        p.vx *= Math.exp(-(out ? 2.2 : 1.5) * dt); // melambat seperti cairan kental
+        // di luar tepi card: cahaya menetes turun, makin deras makin panjang
+        p.vy += (out ? 420 : 40) * dt;
+        p.vy *= Math.exp(-(out ? 0.6 : 2.5) * dt);
+        p.x += (p.vx + Math.sin(t * 1.6 + p.seed) * 10) * dt;
+        p.y += p.vy * dt;
+      }
+    };
+
+    const draw = (t: number) => {
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (t < 0) return;
+      ctx.setTransform(RES, 0, 0, RES, 0, 0);
+      ctx.globalCompositeOperation = "lighter";
+      const { lx, ly, w } = geo;
+      const hitT = t - LASER_DROP;
+      const dropT = clamp(t / LASER_DROP, 0, 1);
+      const headY = ly * Math.pow(dropT, 2.2); // mulai pelan, makin cepat
+      const breathe = 0.92 + 0.08 * Math.sin(t * 1.8);
+
+      // kolam cahaya di tepi atas card, melebar pelan (ease-out)
+      if (hitT > 0) {
+        const e = easeOutCubic(clamp(hitT / 2.6, 0, 1));
+        blob(soft, lx, ly + 20, w * 2.1 * e + 20, 150 * e + 8, 0.5 * breathe);
+        blob(soft, lx, ly, w * 3.4 * e + 20, 260 * e + 8, 0.26 * breathe);
+        blob(hot, lx, ly, w * 0.95 * e + 10, 95 * e + 6, 0.5 * breathe);
+      }
+
+      // kolom sinar: tumpukan gumpalan; melebar (funnel) menjelang card
+      if (headY > 1) {
+        const layers: [number, number, HTMLCanvasElement, number][] = [
+          [w * 0.55, 0.11, soft, 1],
+          [w * 0.24, 0.2, soft, 1],
+          [Math.max(13, w * 0.08), 0.36, hot, 0],
+        ];
+        for (const [R, a, img, flare] of layers) {
+          const stepY = Math.max(3, R * 0.45);
+          for (let y = 0; y <= headY; y += stepY) {
+            const f = flare ? 1 + 1.3 * smooth(clamp((y - (ly - 190)) / 190, 0, 1)) : 1;
+            const sway = Math.sin(y * 0.02 - t * 3.2) * (R > 20 ? 3 : 1.2);
+            // ujung kepala sinar menipis halus
+            const tip = clamp((headY - y) / 60, 0, 1);
+            blob(img, lx + sway, y, R * f, R * f * 1.2, a * breathe * (0.35 + 0.65 * tip));
+          }
+        }
+      }
+      // kepala sinar
+      if (dropT < 1) blob(hot, lx, headY, w * 0.16, w * 0.16, 0.9);
+
+      // ledakan cahaya saat menyentuh card (memudar halus)
+      if (hitT > 0 && hitT < 1.6) {
+        const a = Math.exp(-hitT * 2.6);
+        blob(hot, lx, ly, w * (0.55 + hitT * 1.1), w * (0.28 + hitT * 0.4), 0.95 * a);
+      }
+
+      // gumpalan lelehan: membesar & memudar seiring umur, memanjang saat jatuh
+      for (const p of parts) {
+        const k = p.age / p.life;
+        const alpha = 0.34 * Math.pow(1 - k, 1.6) * Math.min(1, p.age / 0.18);
+        const r = p.r0 * (1 + 1.5 * k);
+        const stretch = 1 + clamp(p.vy / 160, 0, 2.6);
+        blob(soft, p.x, p.y, r * 0.9, r * stretch, alpha);
+        if (k < 0.4) blob(hot, p.x, p.y, r * 0.35, r * 0.35 * stretch, alpha * 0.9);
+      }
+      ctx.globalAlpha = 1;
+      ctx.globalCompositeOperation = "source-over";
+    };
+
+    let raf = 0;
+    if (reduce) {
+      // frame statis: percepat simulasi lalu gambar sekali
+      for (let t = 0; t < 4.5; t += 1 / 30) step(t, 1 / 30);
+      draw(4.5);
+    } else {
+      const start = performance.now();
+      let last = start;
+      const loop = (now: number) => {
+        const dt = Math.min(0.05, (now - last) / 1000);
+        last = now;
+        const t = (now - start) / 1000 - delay;
+        if (t >= 0) step(t, dt);
+        draw(t);
+        raf = requestAnimationFrame(loop);
+      };
+      raf = requestAnimationFrame(loop);
+    }
+
+    return () => {
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+      mo.disconnect();
+    };
+  }, [target, delay, reduce]);
 
   return (
     <div
@@ -99,203 +265,51 @@ export function LaserBeam({
       aria-hidden
       className={`pointer-events-none absolute inset-0 overflow-hidden opacity-60 lg:opacity-100 dark:mix-blend-screen ${className}`}
     >
-      {g && (
-        <>
-          {/* Kolam cahaya lebar yang menyebar sepanjang tepi atas card */}
-          {pool(5, 560, 0.2, 2.8, `radial-gradient(50% 50% at 50% 50%, ${mix(55)}, ${mix(18)} 50%, transparent 72%)`)}
-          {pool(3, 320, 0, 2.0, `radial-gradient(50% 50% at 50% 50%, white, ${mix(85)} 30%, ${mix(30)} 58%, transparent 74%)`)}
-
-          {/* Halo kolom sinar */}
-          <div
-            className="absolute"
-            style={{ left: g.lx - g.w * 0.45, top: 0, width: g.w * 0.9, height: g.ly + 40 }}
-          >
-            <motion.div
-              className="size-full"
-              style={{ originX: 0.5, originY: 0 }}
-              initial={still ? false : { scaleY: 0, opacity: 0 }}
-              animate={{ scaleY: 1, opacity: 1 }}
-              transition={{ duration: LASER_DROP, delay, ease: FALL_EASE }}
-            >
-              <div
-                className="laser-breathe size-full blur-3xl"
-                style={{ background: `linear-gradient(to bottom, ${mix(70)}, ${mix(90)} 80%, ${mix(40)})` }}
-              />
-            </motion.div>
-          </div>
-
-          {/* Garis aliran yang menyapu keluar sepanjang tepi lalu turun di sisi card */}
-          <svg
-            viewBox="0 0 1000 820"
-            preserveAspectRatio="none"
-            fill="none"
-            className="absolute overflow-visible"
-            style={{ left: g.lx - g.w * 1.6, top: g.ly, width: g.w * 3.2, height: g.h * 1.5 }}
-          >
-            {LINES.map((d, i) => (
-              <motion.path
-                key={`draw-${i}`}
-                d={d}
-                stroke={mix(55)}
-                strokeWidth={1.2}
-                vectorEffect="non-scaling-stroke"
-                initial={still ? false : { pathLength: 0, opacity: 0 }}
-                animate={{ pathLength: 1, opacity: 1 }}
-                transition={{ duration: 1.8, delay: hit + 0.2 + (i >> 1) * 0.12, ease: MELT_EASE }}
-              />
-            ))}
-            <motion.g
-              initial={still ? false : { opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1.2, delay: hit + 2.4 }}
-            >
-              {LINES.map((d, i) => (
-                <path
-                  key={`flow-${i}`}
-                  d={d}
-                  pathLength={1}
-                  stroke={mix(85)}
-                  strokeWidth={1.4}
-                  vectorEffect="non-scaling-stroke"
-                  strokeDasharray="0.16 0.84"
-                  className="laser-flow"
-                  style={{ animationDelay: `${-i * 0.8}s`, animationDuration: `${5 + (i % 3)}s` }}
-                />
-              ))}
-            </motion.g>
-          </svg>
-
-          {/* Kolom sinar terang (tebal) */}
-          <div
-            className="absolute"
-            style={{ left: g.lx - 22, top: 0, width: 44, height: g.ly }}
-          >
-            <motion.div
-              className="size-full"
-              style={{ originX: 0.5, originY: 0 }}
-              initial={still ? false : { scaleY: 0 }}
-              animate={{ scaleY: 1 }}
-              transition={{ duration: LASER_DROP, delay, ease: FALL_EASE }}
-            >
-              <div
-                className="laser-breathe size-full blur-md"
-                style={{ background: `linear-gradient(to bottom, ${mix(70)}, white 75%)` }}
-              />
-            </motion.div>
-          </div>
-
-          {/* Inti tajam */}
-          <div className="absolute" style={{ left: g.lx - 2.5, top: 0, width: 5, height: g.ly }}>
-            <motion.div
-              className="size-full rounded-full"
-              style={{
-                originX: 0.5,
-                originY: 0,
-                background: "white",
-                boxShadow: `0 0 20px 4px ${mix(90)}, 0 0 80px 14px ${mix(55)}`,
-              }}
-              initial={still ? false : { scaleY: 0 }}
-              animate={{ scaleY: 1 }}
-              transition={{ duration: LASER_DROP, delay, ease: FALL_EASE }}
-            />
-          </div>
-
-          {/* Pulse idle yang meluncur turun di dalam sinar, aktif setelah intro */}
-          <motion.div
-            className="absolute overflow-hidden rounded-full"
-            style={{ left: g.lx - 2.5, top: 0, width: 5, height: g.ly }}
-            initial={still ? false : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: hit + 1.5, duration: 1 }}
-          >
-            <div
-              className="laser-pulse h-1/3 w-full"
-              style={{ background: "linear-gradient(to bottom, transparent, white, transparent)" }}
-            />
-          </motion.div>
-
-          {/* Kepala sinar: titik terang yang memimpin, meledak saat menyentuh card */}
-          {!still && (
-            <div className="absolute" style={{ left: g.lx - 18, top: 0, width: 36, height: g.ly }}>
-              <motion.div
-                className="absolute left-0 size-9 rounded-full"
-                style={{
-                  marginTop: -18,
-                  background: `radial-gradient(circle, white, ${mix(90)} 40%, transparent 70%)`,
-                }}
-                initial={{ top: "0%", opacity: 0, scale: 0.6 }}
-                animate={{ top: "100%", opacity: [0, 1, 1, 0], scale: [0.6, 1, 1.5, 4] }}
-                transition={{
-                  duration: LASER_DROP,
-                  delay,
-                  ease: FALL_EASE,
-                  opacity: { times: [0, 0.1, 0.8, 1], duration: LASER_DROP, delay },
-                  scale: { times: [0, 0.1, 0.8, 1], duration: LASER_DROP, delay },
-                }}
-              />
-            </div>
-          )}
-
-          {/* Flash tumbukan + garis panas sepanjang tepi atas card */}
-          {!still && (
-            <>
-              <motion.div
-                className="absolute rounded-full"
-                style={{
-                  left: g.lx - g.w * 0.6,
-                  top: g.ly - g.w * 0.6,
-                  width: g.w * 1.2,
-                  height: g.w * 1.2,
-                  background: `radial-gradient(circle, white, ${mix(80)} 35%, transparent 68%)`,
-                }}
-                initial={{ opacity: 0, scale: 0.2 }}
-                animate={{ opacity: [0, 1, 0], scale: [0.2, 1.1, 1.6] }}
-                transition={{ duration: 1.1, delay: hit - 0.05, ease: "easeOut" }}
-              />
-              <motion.div
-                className="absolute h-[3px] rounded-full blur-[1px]"
-                style={{
-                  left: g.lx - g.w * 0.8,
-                  top: g.ly - 1,
-                  width: g.w * 1.6,
-                  background: `linear-gradient(to right, transparent, white 30%, white 70%, transparent)`,
-                  boxShadow: `0 0 24px 4px ${mix(80)}`,
-                  originX: 0.5,
-                }}
-                initial={{ scaleX: 0, opacity: 0 }}
-                animate={{ scaleX: 1, opacity: [0, 1, 0.9] }}
-                transition={{ duration: 1.4, delay: hit - 0.05, ease: MELT_EASE }}
-              />
-            </>
-          )}
-        </>
-      )}
+      <canvas ref={canvasRef} className="absolute inset-0 size-full" />
     </div>
   );
 }
 
+const mix = (pct: number) => `color-mix(in oklch, var(--primary) ${pct}%, transparent)`;
+
 // Cahaya yang jatuh ke MUKA card: taruh di dalam elemen card (overflow-hidden).
+// Menyebar & merembes ke bawah dengan gerak pegas pelan (bukan fade kaku).
 export function LaserCardGlow({ delay = 1.8 }: { delay?: number }) {
   const reduce = useReducedMotion();
   const hit = delay + LASER_DROP;
+  const spring = (stiffness: number, damping: number, extra = 0) => ({
+    type: "spring" as const,
+    stiffness,
+    damping,
+    mass: 1.4,
+    delay: hit - 0.05 + extra,
+  });
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 mix-blend-screen">
+      {/* titik panas di tepi atas, menyebar */}
       <motion.div
-        className="absolute inset-0"
-        initial={reduce ? false : { opacity: 0 }}
-        animate={{ opacity: [0, 1, 0.85] }}
-        transition={{ duration: 1.6, delay: hit - 0.05, ease: "easeOut" }}
-        style={{
-          background: `radial-gradient(75% 50% at 50% 0%, white, ${mix(80)} 38%, transparent 75%)`,
-        }}
-      />
+        className="absolute inset-0 origin-top"
+        initial={reduce ? false : { opacity: 0, scaleX: 0.25, scaleY: 0.2 }}
+        animate={{ opacity: 1, scaleX: 1, scaleY: 1 }}
+        transition={spring(26, 9)}
+      >
+        <div
+          className="laser-breathe size-full"
+          style={{ background: `radial-gradient(80% 52% at 50% 0%, white, ${mix(80)} 36%, transparent 76%)` }}
+        />
+      </motion.div>
+      {/* lelehan yang merembes pelan ke bawah muka card */}
       <motion.div
-        className="absolute inset-x-0 top-0 h-[2px]"
-        initial={reduce ? false : { opacity: 0, scaleX: 0 }}
-        animate={{ opacity: 1, scaleX: 1 }}
-        transition={{ duration: 1.2, delay: hit - 0.05, ease: MELT_EASE }}
-        style={{ background: "linear-gradient(to right, transparent, white 25%, white 75%, transparent)" }}
-      />
+        className="absolute inset-0 origin-top"
+        initial={reduce ? false : { opacity: 0, scaleY: 0.1 }}
+        animate={{ opacity: 1, scaleY: 1 }}
+        transition={spring(10, 7, 0.25)}
+      >
+        <div
+          className="laser-breathe size-full"
+          style={{ background: `radial-gradient(70% 78% at 50% 0%, ${mix(55)}, ${mix(20)} 50%, transparent 82%)` }}
+        />
+      </motion.div>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowDown } from "lucide-react";
 import type { Profile } from "@/lib/types";
@@ -7,7 +8,7 @@ import { useLocale } from "@/lib/i18n/locale-context";
 import { pickByLocale } from "@/lib/i18n/dictionaries";
 import { Tilt } from "@/components/fx/tilt";
 import { Magnetic } from "@/components/fx/magnetic";
-import { LaserBeam } from "@/components/fx/laser-beam";
+import { LaserBeam, LaserCardGlow } from "@/components/fx/laser-beam";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -42,6 +43,7 @@ function SplitName({ text }: { text: string }) {
 
 export function Hero({ profile }: { profile: Profile }) {
   const { locale, t } = useLocale();
+  const cardRef = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll();
   const textY = useTransform(scrollY, [0, 600], [0, 120]);
   const imgY = useTransform(scrollY, [0, 600], [0, -60]);
@@ -67,8 +69,8 @@ export function Hero({ profile }: { profile: Profile }) {
   return (
     <section className="relative mx-auto flex min-h-screen max-w-6xl flex-col justify-center px-6 py-24 sm:px-10 sm:py-28">
       {/* Full-bleed: keluar dari max-w section agar sinar menempel di tepi atas layar */}
-      <div className="absolute inset-y-0 left-1/2 w-screen -translate-x-1/2 [--laser-x:50%] lg:[--laser-x:72%]">
-        <LaserBeam />
+      <div className="absolute inset-y-0 left-1/2 w-screen -translate-x-1/2">
+        <LaserBeam target={cardRef} delay={d} />
       </div>
       <div className="relative z-10 grid items-center gap-10 sm:gap-14 lg:grid-cols-[1.5fr_1fr] lg:gap-16">
         <motion.div style={{ y: textY, opacity: fade }}>
@@ -128,12 +130,12 @@ export function Hero({ profile }: { profile: Profile }) {
         </motion.div>
 
         {avatarUrl && (
+          <div ref={cardRef} className="mx-auto w-full max-w-xs lg:mx-0 lg:justify-self-end">
           <motion.div
             style={{ y: imgY }}
             initial={{ opacity: 0, scale: 0.9, rotate: -3 }}
             animate={{ opacity: 1, scale: 1, rotate: 0 }}
             transition={{ duration: 1, delay: d + 0.2, ease }}
-            className="mx-auto w-full max-w-xs lg:mx-0 lg:justify-self-end"
           >
             <Tilt max={10} className="rounded-2xl">
               <div className="relative overflow-hidden rounded-2xl border border-border bg-card/40 shadow-[0_30px_80px_-30px_var(--primary)]">
@@ -146,6 +148,7 @@ export function Hero({ profile }: { profile: Profile }) {
                   transition={{ duration: 0.45, ease }}
                   className="aspect-4/5 w-full object-cover transition-all duration-700 ease-out hover:scale-[1.04] [@media(hover:hover)]:grayscale [@media(hover:hover)]:hover:grayscale-0"
                 />
+                <LaserCardGlow delay={d} />
                 <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-linear-to-t from-background/90 to-transparent px-4 py-3 font-mono text-[0.65rem] tracking-widest text-foreground/70 uppercase">
                   <span>{profile.name}</span>
                   <span className="text-primary">●</span>
@@ -157,6 +160,7 @@ export function Hero({ profile }: { profile: Profile }) {
               <Corner className="-right-2 -bottom-2 border-r-2 border-b-2" />
             </Tilt>
           </motion.div>
+          </div>
         )}
       </div>
     </section>

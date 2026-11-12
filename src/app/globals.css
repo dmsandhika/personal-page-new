@@ -227,3 +227,17 @@
 @media (prefers-reduced-motion: reduce) {
   .laser-pulse, .laser-flow, .laser-breathe { animation: none; }
 }
+
+/* ── Stack card proyek (components/sections/projects.tsx) ──────────────────
+   Warna per kartu dikirim lewat variabel inline --sc-* (terang) & --sc-d-* (gelap). */
+.stack-card {
+  background: var(--sc-bg);
+  border: 1px solid var(--sc-border);
+  color: var(--sc-fg);
+  box-shadow: 0 -14px 40px -22px rgb(0 0 0 / 0.4);
+}
+.dark .stack-card {
+  background: var(--sc-d-bg);
+  border-color: var(--sc-d-border);
+  color: var(--sc-d-fg);
+}

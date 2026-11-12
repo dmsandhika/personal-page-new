@@ -7,6 +7,7 @@ import { useLocale } from "@/lib/i18n/locale-context";
 import { pickByLocale } from "@/lib/i18n/dictionaries";
 import { Tilt } from "@/components/fx/tilt";
 import { Magnetic } from "@/components/fx/magnetic";
+import { LaserBeam } from "@/components/fx/laser-beam";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -65,7 +66,11 @@ export function Hero({ profile }: { profile: Profile }) {
 
   return (
     <section className="relative mx-auto flex min-h-screen max-w-6xl flex-col justify-center px-6 py-24 sm:px-10 sm:py-28">
-      <div className="grid items-center gap-10 sm:gap-14 lg:grid-cols-[1.5fr_1fr] lg:gap-16">
+      {/* Full-bleed: keluar dari max-w section agar sinar menempel di tepi atas layar */}
+      <div className="absolute inset-y-0 left-1/2 w-screen -translate-x-1/2 [--laser-x:50%] lg:[--laser-x:72%]">
+        <LaserBeam />
+      </div>
+      <div className="relative z-10 grid items-center gap-10 sm:gap-14 lg:grid-cols-[1.5fr_1fr] lg:gap-16">
         <motion.div style={{ y: textY, opacity: fade }}>
           <motion.div
             initial={{ opacity: 0, y: 10 }}

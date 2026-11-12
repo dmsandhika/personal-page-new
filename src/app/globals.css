@@ -207,3 +207,23 @@
     scroll-behavior: auto;
   }
 }
+
+/* ── Laser beam (components/fx/laser-beam.tsx) ───────────────────────────── */
+@keyframes laser-pulse {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(300%); }
+}
+@keyframes laser-flow {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes laser-breathe {
+  0%, 100% { opacity: 0.75; }
+  50% { opacity: 1; }
+}
+.laser-pulse { animation: laser-pulse 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+.laser-flow { animation: laser-flow 6s linear infinite; }
+.laser-breathe { animation: laser-breathe 4s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .laser-pulse, .laser-flow, .laser-breathe { animation: none; }
+}

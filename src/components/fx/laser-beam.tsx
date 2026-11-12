@@ -141,7 +141,7 @@ export function LaserBeam({
           emitAcc -= 1;
           const dir = Math.random() < 0.5 ? -1 : 1;
           const burst = hitT < 0.6 ? 1.5 : 1;
-          const sp = (90 + Math.random() * 340) * burst;
+          const sp = (170 + Math.random() * 520) * burst;
           parts.push({
             x: lx + (Math.random() - 0.5) * w * 0.35,
             y: ly - 4 + Math.random() * 8,
@@ -164,10 +164,13 @@ export function LaserBeam({
           continue;
         }
         const out = Math.abs(p.x - lx) > edge;
-        p.vx *= Math.exp(-(out ? 2.2 : 1.5) * dt); // melambat seperti cairan kental
-        // di luar tepi card: cahaya menetes turun, makin deras makin panjang
-        p.vy += (out ? 420 : 40) * dt;
-        p.vy *= Math.exp(-(out ? 0.6 : 2.5) * dt);
+        p.vx *= Math.exp(-(out ? 1.25 : 1.2) * dt); // melambat seperti cairan kental
+        // di luar tepi card: mengalir ke samping dulu, baru melengkung & menetes
+        // turun setelah jauh dari card dan melambat (seperti lelehan kental)
+        const away = clamp((Math.abs(p.x - lx) - edge) / (w * 0.7), 0, 1);
+        const slow = clamp(1 - Math.abs(p.vx) / 520, 0.12, 1);
+        p.vy += (out ? 380 * away * slow : 30) * dt;
+        p.vy *= Math.exp(-(out ? 0.5 : 2.5) * dt);
         p.x += (p.vx + Math.sin(t * 1.6 + p.seed) * 10) * dt;
         p.y += p.vy * dt;
       }
@@ -188,8 +191,8 @@ export function LaserBeam({
       // kolam cahaya di tepi atas card, melebar pelan (ease-out)
       if (hitT > 0) {
         const e = easeOutCubic(clamp(hitT / 2.6, 0, 1));
-        blob(soft, lx, ly + 20, w * 2.1 * e + 20, 150 * e + 8, 0.5 * breathe);
-        blob(soft, lx, ly, w * 3.4 * e + 20, 260 * e + 8, 0.26 * breathe);
+        blob(soft, lx, ly + 20, w * 3.0 * e + 20, 140 * e + 8, 0.5 * breathe);
+        blob(soft, lx, ly, w * 4.8 * e + 20, 240 * e + 8, 0.26 * breathe);
         blob(hot, lx, ly, w * 0.95 * e + 10, 95 * e + 6, 0.5 * breathe);
       }
 
@@ -226,8 +229,9 @@ export function LaserBeam({
         const alpha = 0.34 * Math.pow(1 - k, 1.6) * Math.min(1, p.age / 0.18);
         const r = p.r0 * (1 + 1.5 * k);
         const stretch = 1 + clamp(p.vy / 160, 0, 2.6);
-        blob(soft, p.x, p.y, r * 0.9, r * stretch, alpha);
-        if (k < 0.4) blob(hot, p.x, p.y, r * 0.35, r * 0.35 * stretch, alpha * 0.9);
+        const sx = 1 + clamp(Math.abs(p.vx) / 240, 0, 1.8);
+        blob(soft, p.x, p.y, r * 0.9 * sx, r * stretch, alpha);
+        if (k < 0.4) blob(hot, p.x, p.y, r * 0.35 * sx, r * 0.35 * stretch, alpha * 0.9);
       }
       ctx.globalAlpha = 1;
       ctx.globalCompositeOperation = "source-over";
@@ -295,7 +299,7 @@ export function LaserCardGlow({ delay = 1.8 }: { delay?: number }) {
       >
         <div
           className="laser-breathe size-full"
-          style={{ background: `radial-gradient(80% 52% at 50% 0%, white, ${mix(80)} 36%, transparent 76%)` }}
+          style={{ background: `radial-gradient(62% 16% at 50% 0%, ${mix(75)}, ${mix(28)} 45%, transparent 80%)` }}
         />
       </motion.div>
       {/* lelehan yang merembes pelan ke bawah muka card */}
@@ -307,7 +311,7 @@ export function LaserCardGlow({ delay = 1.8 }: { delay?: number }) {
       >
         <div
           className="laser-breathe size-full"
-          style={{ background: `radial-gradient(70% 78% at 50% 0%, ${mix(55)}, ${mix(20)} 50%, transparent 82%)` }}
+          style={{ background: `radial-gradient(60% 30% at 50% 0%, ${mix(22)}, transparent 80%)` }}
         />
       </motion.div>
     </div>

@@ -140,22 +140,23 @@ export function LaserBeam({
         while (emitAcc >= 1 && parts.length < MAX_PARTICLES) {
           emitAcc -= 1;
           const dir = Math.random() < 0.5 ? -1 : 1;
-          const burst = hitT < 0.6 ? 1.5 : 1;
-          const sp = (170 + Math.random() * 520) * burst;
+          const burst = hitT < 0.6 ? 1.4 : 1;
+          // sebagian lahir langsung di sudut card dan merayap turun di sisinya
+          const side = Math.random() < 0.55;
           parts.push({
-            x: lx + (Math.random() - 0.5) * w * 0.35,
-            y: ly - 4 + Math.random() * 8,
-            vx: dir * sp,
-            vy: -30 + Math.random() * 50,
+            x: side ? lx + dir * (w * 0.5 + (Math.random() - 0.2) * 14) : lx + (Math.random() - 0.5) * w * 0.9,
+            y: ly - 2 + Math.random() * 10,
+            vx: dir * (side ? 10 + Math.random() * 50 : (120 + Math.random() * 240) * burst),
+            vy: side ? 20 + Math.random() * 60 : -20 + Math.random() * 40,
             age: 0,
-            life: 2.4 + Math.random() * 2.2,
-            r0: 24 + Math.random() * 34,
+            life: 2.8 + Math.random() * 2.6,
+            r0: side ? 20 + Math.random() * 26 : 24 + Math.random() * 30,
             seed: Math.random() * 6.28,
           });
         }
         emitAcc = Math.min(emitAcc, 3);
       }
-      const edge = w * 0.5 - 6;
+      const edge = w * 0.5;
       for (let i = parts.length - 1; i >= 0; i--) {
         const p = parts[i];
         p.age += dt;
@@ -163,15 +164,14 @@ export function LaserBeam({
           parts.splice(i, 1);
           continue;
         }
-        const out = Math.abs(p.x - lx) > edge;
-        p.vx *= Math.exp(-(out ? 1.25 : 1.2) * dt); // melambat seperti cairan kental
-        // di luar tepi card: mengalir ke samping dulu, baru melengkung & menetes
-        // turun setelah jauh dari card dan melambat (seperti lelehan kental)
-        const away = clamp((Math.abs(p.x - lx) - edge) / (w * 0.7), 0, 1);
-        const slow = clamp(1 - Math.abs(p.vx) / 520, 0.12, 1);
-        p.vy += (out ? 380 * away * slow : 30) * dt;
-        p.vy *= Math.exp(-(out ? 0.5 : 2.5) * dt);
-        p.x += (p.vx + Math.sin(t * 1.6 + p.seed) * 10) * dt;
+        const dist = Math.abs(p.x - lx);
+        const out = dist > edge - 4;
+        p.vx *= Math.exp(-(out ? 4.5 : 1.4) * dt); // berhenti mendatar di tepi card
+        // tarik lembut ke dinding samping supaya lelehan menempel di sisi foto
+        if (out) p.vx -= Math.sign(p.x - lx) * Math.max(0, dist - (edge + 22)) * 6 * dt;
+        p.vy += (out ? 320 : 30) * dt; // di sisi card: merambat turun
+        p.vy *= Math.exp(-(out ? 0.45 : 2.5) * dt);
+        p.x += (p.vx + Math.sin(t * 1.6 + p.seed) * 4) * dt;
         p.y += p.vy * dt;
       }
     };
@@ -191,8 +191,8 @@ export function LaserBeam({
       // kolam cahaya di tepi atas card, melebar pelan (ease-out)
       if (hitT > 0) {
         const e = easeOutCubic(clamp(hitT / 2.6, 0, 1));
-        blob(soft, lx, ly + 20, w * 3.0 * e + 20, 140 * e + 8, 0.5 * breathe);
-        blob(soft, lx, ly, w * 4.8 * e + 20, 240 * e + 8, 0.26 * breathe);
+        blob(soft, lx, ly + 20, w * 1.9 * e + 20, 130 * e + 8, 0.5 * breathe);
+        blob(soft, lx, ly, w * 2.7 * e + 20, 230 * e + 8, 0.26 * breathe);
         blob(hot, lx, ly, w * 0.95 * e + 10, 95 * e + 6, 0.5 * breathe);
       }
 

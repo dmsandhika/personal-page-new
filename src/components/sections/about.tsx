@@ -30,20 +30,20 @@ export function About({
   ].filter((s) => s.n > 0);
 
   return (
-    <section id="about" className="mx-auto max-w-5xl px-6 py-28 sm:px-10">
+    <section id="about" className="mx-auto max-w-5xl px-6 py-24 sm:px-10">
       <SectionHeading number="01">{t("section.about")}</SectionHeading>
 
       <RevealText
         text={bio}
-        className="font-display text-2xl leading-[1.4] font-medium tracking-tight sm:text-4xl sm:leading-[1.35]"
+        className="font-display text-xl leading-[1.45] font-medium tracking-tight sm:text-3xl sm:leading-[1.4]"
       />
 
       {items.length > 0 && (
         <FadeIn>
-          <div className="mt-16 grid grid-cols-3 divide-x divide-border rounded-2xl border border-border bg-card/40 backdrop-blur-sm rtl:divide-x-reverse">
+          <div className="mt-12 grid grid-cols-3 divide-x divide-border rounded-2xl border border-border bg-card/40 backdrop-blur-sm rtl:divide-x-reverse">
             {items.map((s) => (
               <div key={s.label} className="px-4 py-6 text-center sm:py-8">
-                <p className="font-display text-4xl font-bold text-primary tabular-nums sm:text-6xl">
+                <p className="font-display text-3xl font-bold text-primary tabular-nums sm:text-5xl">
                   <CountUp to={s.n} />
                   <span className="text-muted-foreground">+</span>
                 </p>

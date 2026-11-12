@@ -17,6 +17,8 @@ import { motion, useReducedMotion } from "framer-motion";
 export const LASER_DROP = 1.0; // detik sinar jatuh sampai card
 const RES = 0.5; // resolusi canvas (glow lunak tak perlu resolusi penuh)
 const MAX_PARTICLES = 260;
+const CARD_R = 16; // radius sudut card (rounded-2xl) agar glow pas mengikuti kontur
+const RIM_STEP = 8; // jarak antar titik sampel di sepanjang tepi card
 
 const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v));
 const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
@@ -33,6 +35,7 @@ type Particle = {
   seed: number;
 };
 type Geo = { lx: number; ly: number; w: number; h: number; cw: number; ch: number };
+type RimPt = { x: number; y: number; u: number }; // u: 0 di tengah tepi atas -> 1 di tengah tepi bawah
 
 // Sprite gumpalan: warna primary, pusat memutih ("panas"), tepi memudar halus.
 function makeSprite(color: string, hot: number) {
@@ -92,6 +95,32 @@ export function LaserBeam({
     if (!ctx) return;
 
     let geo: Geo = { lx: 0, ly: 0, w: 320, h: 400, cw: 0, ch: 0 };
+    let rim: RimPt[] = [];
+    // Titik-titik di sepanjang kontur setengah card (kiri): dari tengah tepi atas,
+    // lewat sudut membulat, turun di sisi, sampai tengah tepi bawah. Sisi kanan dicerminkan.
+    const buildRim = () => {
+      const { lx, ly, w, h } = geo;
+      const r = Math.min(CARD_R, w / 2, h / 2);
+      const L = lx - w / 2;
+      const pts: [number, number][] = [];
+      const seg = (x0: number, y0: number, x1: number, y1: number) => {
+        const n = Math.max(1, Math.ceil(Math.hypot(x1 - x0, y1 - y0) / RIM_STEP));
+        for (let i = 0; i < n; i++) pts.push([x0 + ((x1 - x0) * i) / n, y0 + ((y1 - y0) * i) / n]);
+      };
+      const arc = (cx: number, cy: number, a0: number, a1: number) => {
+        const n = Math.max(2, Math.ceil((r * Math.abs(a1 - a0)) / RIM_STEP));
+        for (let i = 0; i < n; i++) {
+          const a = a0 + ((a1 - a0) * i) / n;
+          pts.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]);
+        }
+      };
+      seg(lx, ly, L + r, ly);
+      arc(L + r, ly + r, -Math.PI / 2, -Math.PI);
+      seg(L, ly + r, L, ly + h - r);
+      arc(L + r, ly + h - r, Math.PI, Math.PI / 2);
+      seg(L + r, ly + h, lx, ly + h);
+      rim = pts.map((q, i) => ({ x: q[0], y: q[1], u: i / Math.max(1, pts.length - 1) }));
+    };
     let soft = makeSprite("#34d399", 0.25);
     let hot = makeSprite("#34d399", 1);
     const rebuildSprites = () => {
@@ -113,6 +142,7 @@ export function LaserBeam({
       geo = { ...base, cw: wr.width, ch: wr.height };
       canvas.width = Math.max(1, Math.round(wr.width * RES));
       canvas.height = Math.max(1, Math.round(wr.height * RES));
+      buildRim();
     };
     measure();
 
@@ -136,21 +166,21 @@ export function LaserBeam({
       const hitT = t - LASER_DROP;
       // laju semburan: meledak saat tumbukan, lalu turun ke aliran tipis yang bertahan
       if (hitT > 0) {
-        emitAcc += (16 + 80 * Math.exp(-hitT / 0.75)) * dt;
+        emitAcc += (22 + 80 * Math.exp(-hitT / 0.75)) * dt;
         while (emitAcc >= 1 && parts.length < MAX_PARTICLES) {
           emitAcc -= 1;
           const dir = Math.random() < 0.5 ? -1 : 1;
           const burst = hitT < 0.6 ? 1.4 : 1;
           // sebagian lahir langsung di sudut card dan merayap turun di sisinya
-          const side = Math.random() < 0.55;
+          const side = Math.random() < 0.3;
           parts.push({
-            x: side ? lx + dir * (w * 0.5 + (Math.random() - 0.2) * 14) : lx + (Math.random() - 0.5) * w * 0.9,
+            x: side ? lx + dir * (w * 0.5 + (Math.random() - 0.4) * 8) : lx + (Math.random() - 0.5) * w * 0.9,
             y: ly - 2 + Math.random() * 10,
             vx: dir * (side ? 10 + Math.random() * 50 : (120 + Math.random() * 240) * burst),
             vy: side ? 20 + Math.random() * 60 : -20 + Math.random() * 40,
             age: 0,
             life: 2.8 + Math.random() * 2.6,
-            r0: side ? 20 + Math.random() * 26 : 24 + Math.random() * 30,
+            r0: side ? 14 + Math.random() * 16 : 24 + Math.random() * 30,
             seed: Math.random() * 6.28,
           });
         }
@@ -168,7 +198,7 @@ export function LaserBeam({
         const out = dist > edge - 4;
         p.vx *= Math.exp(-(out ? 4.5 : 1.4) * dt); // berhenti mendatar di tepi card
         // tarik lembut ke dinding samping supaya lelehan menempel di sisi foto
-        if (out) p.vx -= Math.sign(p.x - lx) * Math.max(0, dist - (edge + 22)) * 6 * dt;
+        if (out) p.vx -= Math.sign(p.x - lx) * Math.max(0, dist - (edge + 3)) * 9 * dt;
         p.vy += (out ? 320 : 30) * dt; // di sisi card: merambat turun
         p.vy *= Math.exp(-(out ? 0.45 : 2.5) * dt);
         p.x += (p.vx + Math.sin(t * 1.6 + p.seed) * 4) * dt;
@@ -194,6 +224,23 @@ export function LaserBeam({
         blob(soft, lx, ly + 20, w * 1.9 * e + 20, 130 * e + 8, 0.5 * breathe);
         blob(soft, lx, ly, w * 2.7 * e + 20, 230 * e + 8, 0.26 * breathe);
         blob(hot, lx, ly, w * 0.95 * e + 10, 95 * e + 6, 0.5 * breathe);
+      }
+
+      // glow mengikuti kontur card: mengalir dari tengah tepi atas, mengitari sudut
+      // membulat, lalu turun di kedua sisi; makin jauh makin redup (halus, tanpa bola)
+      if (hitT > 0 && rim.length) {
+        const reveal = easeOutCubic(clamp(hitT / 3.2, 0, 1));
+        const flash = 1 + 1.1 * Math.exp(-hitT * 2.2);
+        for (const q of rim) {
+          const front = clamp((reveal * 1.08 - q.u) / 0.12, 0, 1);
+          if (front <= 0) continue;
+          const fall = 0.16 + 0.84 * Math.pow(1 - q.u, 1.5);
+          const k = front * fall * breathe * flash;
+          for (const x of [q.x, 2 * lx - q.x]) {
+            blob(soft, x, q.y, 34, 34, 0.075 * k);
+            blob(hot, x, q.y, 12, 12, 0.1 * k * fall);
+          }
+        }
       }
 
       // kolom sinar: tumpukan gumpalan; melebar (funnel) menjelang card
@@ -228,7 +275,7 @@ export function LaserBeam({
         const k = p.age / p.life;
         // memudar halus setelah lewat bawah card, supaya tak berhenti mendadak
         const below = clamp((p.y - (ly + geo.h)) / 240, 0, 1);
-        const alpha = 0.34 * Math.pow(1 - k, 1.6) * Math.min(1, p.age / 0.18) * (1 - smooth(below));
+        const alpha = 0.22 * Math.pow(1 - k, 1.6) * Math.min(1, p.age / 0.18) * (1 - smooth(below));
         const r = p.r0 * (1 + 1.5 * k);
         const stretch = 1 + clamp(p.vy / 160, 0, 2.6);
         const sx = 1 + clamp(Math.abs(p.vx) / 240, 0, 1.8);

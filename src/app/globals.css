@@ -207,3 +207,37 @@
     scroll-behavior: auto;
   }
 }
+
+/* ── Laser beam (components/fx/laser-beam.tsx) ───────────────────────────── */
+@keyframes laser-pulse {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(300%); }
+}
+@keyframes laser-flow {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes laser-breathe {
+  0%, 100% { opacity: 0.75; }
+  50% { opacity: 1; }
+}
+.laser-pulse { animation: laser-pulse 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+.laser-flow { animation: laser-flow 6s linear infinite; }
+.laser-breathe { animation: laser-breathe 4s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .laser-pulse, .laser-flow, .laser-breathe { animation: none; }
+}
+
+/* ── Stack card proyek (components/sections/projects.tsx) ──────────────────
+   Warna per kartu dikirim lewat variabel inline --sc-* (terang) & --sc-d-* (gelap). */
+.stack-card {
+  background: var(--sc-bg);
+  border: 1px solid var(--sc-border);
+  color: var(--sc-fg);
+  box-shadow: 0 -14px 40px -22px rgb(0 0 0 / 0.4);
+}
+.dark .stack-card {
+  background: var(--sc-d-bg);
+  border-color: var(--sc-d-border);
+  color: var(--sc-d-fg);
+}

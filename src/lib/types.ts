@@ -91,3 +91,23 @@ export type Education = {
   sort_order: number;
   created_at: string;
 };
+
+export type OpenSourceKind = "library" | "tool" | "app" | "image";
+
+export type OpenSource = {
+  id: string;
+  name: string;
+  repo: string | null;
+  kind: OpenSourceKind;
+  npm_package: string | null;
+  composer_package: string | null;
+  docker_image: string | null;
+  homepage_url: string | null;
+  description: string;
+  description_en: string | null;
+  description_ar: string | null;
+  description_jv: string | null;
+  featured: boolean;
+  sort_order: number;
+  created_at: string;
+};

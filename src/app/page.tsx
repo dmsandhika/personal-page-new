@@ -7,6 +7,9 @@ import { About } from "@/components/sections/about";
 import { Education } from "@/components/sections/education";
 import { Experience } from "@/components/sections/experience";
 import { Projects } from "@/components/sections/projects";
+import { OpenSourceSection } from "@/components/sections/open-source";
+import { getOpenSourceStats } from "@/lib/open-source-stats";
+import type { OpenSource } from "@/lib/types";
 import { Contact } from "@/components/sections/contact";
 import { PageControls } from "@/components/page-controls";
 import { NavDock } from "@/components/nav-dock";
@@ -46,7 +49,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Home() {
-  const [profile, { data: education }, { data: experience }, { data: projects }] =
+  const [profile, { data: education }, { data: experience }, { data: projects }, { data: openSource }] =
     await Promise.all([
       getProfile(),
       supabasePublic
@@ -61,7 +64,19 @@ export default async function Home() {
         .from("projects")
         .select("*")
         .order("sort_order", { ascending: true }),
+      supabasePublic
+        .from("open_source")
+        .select("*")
+        .order("sort_order", { ascending: true }),
     ]);
+
+  // Statistik live (stars, versi, unduhan) diambil paralel & di-cache sejam.
+  const openSourceItems = await Promise.all(
+    ((openSource ?? []) as OpenSource[]).map(async (item) => ({
+      ...item,
+      stats: await getOpenSourceStats(item),
+    }))
+  );
 
   if (!profile) {
     return (
@@ -111,6 +126,7 @@ export default async function Home() {
       <Education items={education ?? []} />
       <Experience items={experience ?? []} />
       <Projects items={projects ?? []} />
+      <OpenSourceSection items={openSourceItems} githubUrl={profile.github_url} />
       <Contact profile={profile} />
       <NavDock
         available={[
@@ -118,6 +134,7 @@ export default async function Home() {
           ...(education?.length ? ["education"] : []),
           ...(experience?.length ? ["experience"] : []),
           ...(projects?.length ? ["projects"] : []),
+          ...(openSourceItems.length ? ["opensource"] : []),
           "contact",
         ]}
       />

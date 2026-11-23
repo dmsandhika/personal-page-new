@@ -15,6 +15,7 @@ const NAV_ITEMS = [
   { href: "/admin/education", label: "Education" },
   { href: "/admin/experience", label: "Experience" },
   { href: "/admin/projects", label: "Projects" },
+  { href: "/admin/opensource", label: "Open Source" },
 ];
 
 export default function AdminLayout({

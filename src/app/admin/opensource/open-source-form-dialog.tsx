@@ -91,6 +91,19 @@ export function OpenSourceFormDialog({
           </div>
 
           <div className="space-y-1.5">
+            <Label htmlFor="status">Status</Label>
+            <Select name="status" defaultValue={item?.status ?? "ready"}>
+              <SelectTrigger id="status" className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ready">Siap pakai</SelectItem>
+                <SelectItem value="in_progress">On progress</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-1.5">
             <Label htmlFor="repo">Repo GitHub</Label>
             <Input
               id="repo"

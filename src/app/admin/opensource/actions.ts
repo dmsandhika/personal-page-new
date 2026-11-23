@@ -23,6 +23,7 @@ function itemFromForm(formData: FormData) {
     name: str(formData, "name"),
     repo: normalizeRepo(str(formData, "repo")) || null,
     kind: KINDS.includes(kind) ? kind : "library",
+    status: str(formData, "status") === "in_progress" ? "in_progress" : "ready",
     npm_package: str(formData, "npm_package") || null,
     composer_package: str(formData, "composer_package") || null,
     docker_image: str(formData, "docker_image") || null,

@@ -137,6 +137,21 @@ function Card({ item }: { item: OpenSourceItem }) {
           {item.featured && <span className="text-primary">★ {t("oss.featured")}</span>}
           {item.featured && <span aria-hidden>·</span>}
           {t(KIND_KEY[item.kind])}
+          <span aria-hidden>·</span>
+          <span
+            className={cn(
+              "flex items-center gap-1.5",
+              item.status === "ready" ? "text-primary" : "text-amber-500 dark:text-amber-400"
+            )}
+          >
+            <span
+              className={cn(
+                "size-1.5 rounded-full bg-current",
+                item.status === "in_progress" && "animate-pulse"
+              )}
+            />
+            {item.status === "ready" ? t("oss.status.ready") : t("oss.status.progress")}
+          </span>
         </span>
         {lang && (
           <span className="flex items-center gap-1.5 text-muted-foreground">

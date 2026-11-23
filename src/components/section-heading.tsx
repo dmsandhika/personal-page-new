@@ -10,11 +10,13 @@ const ease = [0.22, 1, 0.36, 1] as const;
 export function SectionHeading({
   children,
   number,
+  total = "06",
   align = "left",
   className,
 }: {
   children: React.ReactNode;
   number?: string;
+  total?: string;
   align?: "left" | "center";
   className?: string;
 }) {
@@ -29,7 +31,7 @@ export function SectionHeading({
     >
       {number && (
         <span className="font-mono text-xs tracking-[0.3em] text-primary">
-          {number} <span className="text-muted-foreground">/ 05</span>
+          {number} <span className="text-muted-foreground">/ {total}</span>
         </span>
       )}
       <div className="overflow-hidden pb-2">

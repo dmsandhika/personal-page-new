@@ -3,7 +3,7 @@
 import { animate, useInView } from "framer-motion";
 import { useEffect, useRef } from "react";
 
-export function CountUp({ to }: { to: number }) {
+export function CountUp({ to, format }: { to: number; format?: (n: number) => string }) {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true });
 
@@ -14,11 +14,11 @@ export function CountUp({ to }: { to: number }) {
       duration: 1.4,
       ease: [0.22, 1, 0.36, 1],
       onUpdate: (v) => {
-        el.textContent = String(Math.round(v));
+        el.textContent = format ? format(v) : String(Math.round(v));
       },
     });
     return () => controls.stop();
-  }, [inView, to]);
+  }, [inView, to, format]);
 
   return <span ref={ref}>0</span>;
 }

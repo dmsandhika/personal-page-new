@@ -10,6 +10,7 @@ const ITEMS: { id: string; key: DictionaryKey }[] = [
   { id: "education", key: "section.education" },
   { id: "experience", key: "section.experience" },
   { id: "projects", key: "section.projects" },
+  { id: "opensource", key: "section.opensource" },
   { id: "contact", key: "section.contact" },
 ];
 

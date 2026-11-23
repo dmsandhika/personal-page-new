@@ -94,11 +94,14 @@ export type Education = {
 
 export type OpenSourceKind = "library" | "tool" | "app" | "image";
 
+export type OpenSourceStatus = "in_progress" | "ready";
+
 export type OpenSource = {
   id: string;
   name: string;
   repo: string | null;
   kind: OpenSourceKind;
+  status: OpenSourceStatus;
   npm_package: string | null;
   composer_package: string | null;
   docker_image: string | null;

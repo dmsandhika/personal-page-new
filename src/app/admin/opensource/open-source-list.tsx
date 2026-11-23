@@ -76,6 +76,7 @@ function SortableRow({
       <TableCell className="font-medium">{item.name}</TableCell>
       <TableCell className="text-muted-foreground">{item.repo ?? "-"}</TableCell>
       <TableCell>{item.kind}</TableCell>
+      <TableCell>{item.status === "ready" ? "Siap pakai" : "On progress"}</TableCell>
       <TableCell>{registries(item) || "-"}</TableCell>
       <TableCell>{item.featured ? "Ya" : "-"}</TableCell>
       <TableCell className="flex justify-end gap-2">
@@ -149,6 +150,7 @@ export function OpenSourceList({ items: initialItems }: { items: OpenSource[] })
             <TableHead>Nama</TableHead>
             <TableHead>Repo</TableHead>
             <TableHead>Jenis</TableHead>
+            <TableHead>Status</TableHead>
             <TableHead>Registry</TableHead>
             <TableHead>Unggulan</TableHead>
             <TableHead className="text-right">Aksi</TableHead>
